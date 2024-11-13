@@ -11,6 +11,19 @@ class FormScreen extends StatefulWidget {
 class _FormScreenState extends State<FormScreen> {
   List<int> ageList = List.generate(84, (index) => index + 16);
   int age = 0;
+
+  List<int> feetList = List.generate(7, (index) => index + 3);
+  int heightFeet = 5;
+
+  List<int> inchList = List.generate(12, (index) => index + 1);
+  int heightInches = 0;
+
+  List<int> kList = List.generate(120, (index) => index + 30);
+  int weightK = 20;
+
+  List<int> gList = List.generate(20, (index) => index * 50);
+  int weightG = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +82,10 @@ class _FormScreenState extends State<FormScreen> {
                         onTap: () {
                           _showAgePicker();
                         },
-                        child: Text(age.toString())))
+                        child: Text(
+                          age.toString(),
+                          style: TextStyle(fontSize: 24),
+                        )))
               ],
             ),
             decoration: BoxDecoration(
@@ -95,7 +111,10 @@ class _FormScreenState extends State<FormScreen> {
                         onTap: () {
                           _showWeightPicker();
                         },
-                        child: Text(age.toString())))
+                        child: Text(
+                          weightK.toString() + "." + weightG.toString(),
+                          style: TextStyle(fontSize: 24),
+                        )))
               ],
             ),
             decoration: BoxDecoration(
@@ -121,7 +140,12 @@ class _FormScreenState extends State<FormScreen> {
                         onTap: () {
                           _showHeightPicker();
                         },
-                        child: Text(age.toString())))
+                        child: Text(
+                          heightFeet.toString() +
+                              " : " +
+                              heightInches.toString(),
+                          style: TextStyle(fontSize: 24),
+                        )))
               ],
             ),
             decoration: BoxDecoration(
@@ -186,8 +210,12 @@ class _FormScreenState extends State<FormScreen> {
               ),
               Expanded(
                   child: CupertinoPicker(
-                      itemExtent: 40,
+                      itemExtent: 30,
+                      magnification: 1.25,
                       onSelectedItemChanged: (index) => {},
+                      selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
+                        background: const Color.fromARGB(125, 31, 105, 32),
+                      ),
                       children: List<Widget>.generate(ageList.length,
                           (index) => Text(ageList[index].toString())))),
               SizedBox(height: 40)
@@ -208,36 +236,44 @@ class _FormScreenState extends State<FormScreen> {
               ),
             ),
             Expanded(
-                child: Row(children: [
-              Expanded(
-                  child: CupertinoPicker(
-                      selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
-                        background: const Color.fromARGB(125, 31, 105, 32),
-                        capEndEdge: false,
-                      ),
-                      itemExtent: 40,
-                      magnification: 1.25,
-                      onSelectedItemChanged: (index) => {},
-                      children: List<Widget>.generate(ageList.length, (index) {
-                        return Center(
-                          child: Text(ageList[index].toString()),
-                        );
-                      }))),
-              Expanded(
-                  child: CupertinoPicker(
-                      selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
-                        background: const Color.fromARGB(125, 31, 105, 32),
-                        capStartEdge: false,
-                      ),
-                      itemExtent: 40,
-                      magnification: 1.25,
-                      onSelectedItemChanged: (index) => {},
-                      children: List<Widget>.generate(ageList.length, (index) {
-                        return Center(
-                          child: Text(ageList[index].toString()),
-                        );
-                      })))
-            ])),
+                child: Padding(
+                    padding: EdgeInsets.only(left: 50, right: 50),
+                    child: Row(children: [
+                      Expanded(
+                          child: CupertinoPicker(
+                              selectionOverlay:
+                                  CupertinoPickerDefaultSelectionOverlay(
+                                background:
+                                    const Color.fromARGB(125, 31, 105, 32),
+                                capEndEdge: false,
+                              ),
+                              itemExtent: 30,
+                              magnification: 1.25,
+                              onSelectedItemChanged: (index) => {},
+                              children: List<Widget>.generate(ageList.length,
+                                  (index) {
+                                return Center(
+                                  child: Text(ageList[index].toString()),
+                                );
+                              }))),
+                      Expanded(
+                          child: CupertinoPicker(
+                              selectionOverlay:
+                                  CupertinoPickerDefaultSelectionOverlay(
+                                background:
+                                    const Color.fromARGB(125, 31, 105, 32),
+                                capStartEdge: false,
+                              ),
+                              itemExtent: 30,
+                              magnification: 1.25,
+                              onSelectedItemChanged: (index) => {},
+                              children: List<Widget>.generate(ageList.length,
+                                  (index) {
+                                return Center(
+                                  child: Text(ageList[index].toString()),
+                                );
+                              })))
+                    ]))),
           ]);
         });
   }
@@ -254,36 +290,46 @@ class _FormScreenState extends State<FormScreen> {
               ),
             ),
             Expanded(
-                child: Row(children: [
-              Expanded(
-                  child: CupertinoPicker(
-                      selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
-                        background: const Color.fromARGB(125, 31, 105, 32),
-                        capEndEdge: false,
-                      ),
-                      itemExtent: 40,
-                      magnification: 1.25,
-                      onSelectedItemChanged: (index) => {},
-                      children: List<Widget>.generate(ageList.length, (index) {
-                        return Center(
-                          child: Text(ageList[index].toString()),
-                        );
-                      }))),
-              Expanded(
-                  child: CupertinoPicker(
-                      selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
-                        background: const Color.fromARGB(125, 31, 105, 32),
-                        capStartEdge: false,
-                      ),
-                      itemExtent: 40,
-                      magnification: 1.25,
-                      onSelectedItemChanged: (index) => {},
-                      children: List<Widget>.generate(ageList.length, (index) {
-                        return Center(
-                          child: Text(ageList[index].toString()),
-                        );
-                      })))
-            ])),
+                child: Padding(
+                    padding: EdgeInsets.only(left: 50, right: 50),
+                    child: Row(children: [
+                      Expanded(
+                          child: CupertinoPicker(
+                              selectionOverlay:
+                                  CupertinoPickerDefaultSelectionOverlay(
+                                background:
+                                    const Color.fromARGB(125, 31, 105, 32),
+                                capEndEdge: false,
+                              ),
+                              itemExtent: 30,
+                              scrollController:
+                                  FixedExtentScrollController(initialItem: 0),
+                              magnification: 1.25,
+                              onSelectedItemChanged: (index) => {},
+                              children: List<Widget>.generate(feetList.length,
+                                  (index) {
+                                return Center(
+                                  child: Text(feetList[index].toString()),
+                                );
+                              }))),
+                      Expanded(
+                          child: CupertinoPicker(
+                              selectionOverlay:
+                                  CupertinoPickerDefaultSelectionOverlay(
+                                background:
+                                    const Color.fromARGB(125, 31, 105, 32),
+                                capStartEdge: false,
+                              ),
+                              itemExtent: 30,
+                              magnification: 1.25,
+                              onSelectedItemChanged: (index) => {},
+                              children: List<Widget>.generate(inchList.length,
+                                  (index) {
+                                return Center(
+                                  child: Text(inchList[index].toString()),
+                                );
+                              })))
+                    ]))),
           ]);
         });
   }
