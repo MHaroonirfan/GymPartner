@@ -67,8 +67,7 @@ class _FormScreenState extends State<FormScreen> {
                 Expanded(
                     child: GestureDetector(
                         onTap: () {
-                          print("object");
-                          _showPicker();
+                          _showAgePicker();
                         },
                         child: Text(age.toString())))
               ],
@@ -94,8 +93,7 @@ class _FormScreenState extends State<FormScreen> {
                 Expanded(
                     child: GestureDetector(
                         onTap: () {
-                          print("object");
-                          _showPicker();
+                          _showWeightPicker();
                         },
                         child: Text(age.toString())))
               ],
@@ -121,8 +119,7 @@ class _FormScreenState extends State<FormScreen> {
                 Expanded(
                     child: GestureDetector(
                         onTap: () {
-                          print("object");
-                          _showPicker();
+                          _showHeightPicker();
                         },
                         child: Text(age.toString())))
               ],
@@ -131,6 +128,13 @@ class _FormScreenState extends State<FormScreen> {
                 border: Border.all(width: 0.75),
                 borderRadius: BorderRadius.circular(10)),
           )),
+      Container(
+        height: 10,
+        decoration: BoxDecoration(border: Border(bottom: BorderSide())),
+      ),
+      SizedBox(
+        height: 5,
+      ),
       Column(children: getFormDays())
     ];
   }
@@ -161,21 +165,91 @@ class _FormScreenState extends State<FormScreen> {
                     days[i],
                     style: const TextStyle(fontSize: 20),
                   )),
-                  Switch.adaptive(value: false, onChanged: (s) => {})
+                  Switch(value: false, onChanged: (s) => {})
                 ],
               ))));
     }
     return result;
   }
 
-  void _showPicker() {
+  void _showAgePicker() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Column(
+            children: [
+              Center(
+                child: Text(
+                  "Pick Your Age",
+                  style: TextStyle(fontSize: 32),
+                ),
+              ),
+              Expanded(
+                  child: CupertinoPicker(
+                      itemExtent: 40,
+                      onSelectedItemChanged: (index) => {},
+                      children: List<Widget>.generate(ageList.length,
+                          (index) => Text(ageList[index].toString())))),
+              SizedBox(height: 40)
+            ],
+          );
+        });
+  }
+
+  void _showWeightPicker() {
     showModalBottomSheet(
         context: context,
         builder: (context) {
           return Column(children: [
             Center(
               child: Text(
-                "Pick your Age",
+                "Pick your Weight",
+                style: TextStyle(fontSize: 32),
+              ),
+            ),
+            Expanded(
+                child: Row(children: [
+              Expanded(
+                  child: CupertinoPicker(
+                      selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
+                        background: const Color.fromARGB(125, 31, 105, 32),
+                        capEndEdge: false,
+                      ),
+                      itemExtent: 40,
+                      magnification: 1.25,
+                      onSelectedItemChanged: (index) => {},
+                      children: List<Widget>.generate(ageList.length, (index) {
+                        return Center(
+                          child: Text(ageList[index].toString()),
+                        );
+                      }))),
+              Expanded(
+                  child: CupertinoPicker(
+                      selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
+                        background: const Color.fromARGB(125, 31, 105, 32),
+                        capStartEdge: false,
+                      ),
+                      itemExtent: 40,
+                      magnification: 1.25,
+                      onSelectedItemChanged: (index) => {},
+                      children: List<Widget>.generate(ageList.length, (index) {
+                        return Center(
+                          child: Text(ageList[index].toString()),
+                        );
+                      })))
+            ])),
+          ]);
+        });
+  }
+
+  void _showHeightPicker() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Column(children: [
+            Center(
+              child: Text(
+                "Pick your Height",
                 style: TextStyle(fontSize: 32),
               ),
             ),
