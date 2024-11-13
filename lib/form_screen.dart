@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class FormScreen extends StatefulWidget {
   const FormScreen({super.key});
@@ -8,6 +9,8 @@ class FormScreen extends StatefulWidget {
 }
 
 class _FormScreenState extends State<FormScreen> {
+  List<int> ageList = List.generate(84, (index) => index + 16);
+  int age = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,36 +52,84 @@ class _FormScreenState extends State<FormScreen> {
           )),
       Padding(
           padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
-          child: TextField(
-            decoration: InputDecoration(
-                labelText: "Age",
-                labelStyle:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10))),
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+          child: Container(
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                    child: Text(
+                  "Age",
+                  style: TextStyle(fontSize: 24),
+                )),
+                Spacer(),
+                Expanded(
+                    child: GestureDetector(
+                        onTap: () {
+                          print("object");
+                          _showPicker();
+                        },
+                        child: Text(age.toString())))
+              ],
+            ),
+            decoration: BoxDecoration(
+                border: Border.all(width: 0.75),
+                borderRadius: BorderRadius.circular(10)),
           )),
       Padding(
           padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
-          child: TextField(
-            decoration: InputDecoration(
-                labelText: "Gender",
-                labelStyle:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10))),
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+          child: Container(
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                    child: Text(
+                  "Weight",
+                  style: TextStyle(fontSize: 24),
+                )),
+                Spacer(),
+                Expanded(
+                    child: GestureDetector(
+                        onTap: () {
+                          print("object");
+                          _showPicker();
+                        },
+                        child: Text(age.toString())))
+              ],
+            ),
+            decoration: BoxDecoration(
+                border: Border.all(width: 0.75),
+                borderRadius: BorderRadius.circular(10)),
           )),
       Padding(
           padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
-          child: TextField(
-            decoration: InputDecoration(
-                labelText: "Weight",
-                labelStyle:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10))),
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+          child: Container(
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                    child: Text(
+                  "Height",
+                  style: TextStyle(fontSize: 24),
+                )),
+                Spacer(),
+                Expanded(
+                    child: GestureDetector(
+                        onTap: () {
+                          print("object");
+                          _showPicker();
+                        },
+                        child: Text(age.toString())))
+              ],
+            ),
+            decoration: BoxDecoration(
+                border: Border.all(width: 0.75),
+                borderRadius: BorderRadius.circular(10)),
           )),
       Column(children: getFormDays())
     ];
@@ -115,5 +166,51 @@ class _FormScreenState extends State<FormScreen> {
               ))));
     }
     return result;
+  }
+
+  void _showPicker() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Column(children: [
+            Center(
+              child: Text(
+                "Pick your Age",
+                style: TextStyle(fontSize: 32),
+              ),
+            ),
+            Expanded(
+                child: Row(children: [
+              Expanded(
+                  child: CupertinoPicker(
+                      selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
+                        background: const Color.fromARGB(125, 31, 105, 32),
+                        capEndEdge: false,
+                      ),
+                      itemExtent: 40,
+                      magnification: 1.25,
+                      onSelectedItemChanged: (index) => {},
+                      children: List<Widget>.generate(ageList.length, (index) {
+                        return Center(
+                          child: Text(ageList[index].toString()),
+                        );
+                      }))),
+              Expanded(
+                  child: CupertinoPicker(
+                      selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
+                        background: const Color.fromARGB(125, 31, 105, 32),
+                        capStartEdge: false,
+                      ),
+                      itemExtent: 40,
+                      magnification: 1.25,
+                      onSelectedItemChanged: (index) => {},
+                      children: List<Widget>.generate(ageList.length, (index) {
+                        return Center(
+                          child: Text(ageList[index].toString()),
+                        );
+                      })))
+            ])),
+          ]);
+        });
   }
 }
