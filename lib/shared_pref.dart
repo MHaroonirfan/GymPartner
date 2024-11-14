@@ -1,9 +1,9 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPref {
-  SharedPreferences? _preferences;
+  static SharedPreferences? _preferences;
 
-  SharedPref instance = SharedPref._init();
+  static final SharedPref instance = SharedPref._init();
 
   SharedPref._init();
 
@@ -16,12 +16,21 @@ class SharedPref {
     }
   }
 
-  dynamic getValue(String key, dynamic defaultValue) {
-    dynamic value = _preferences!.get(key);
+  String? getStringValue(String key) {
+    String? value = _preferences!.getString(key);
     return value;
   }
 
-  Future setStringValue(String key, dynamic value) async {
+  int? getIntValue(String key) {
+    int? value = _preferences!.getInt(key);
+    return value;
+  }
+
+  Future setStringValue(String key, String value) async {
     await _preferences!.setString(key, value);
+  }
+
+  Future setIntValue(String key, int value) async {
+    await _preferences!.setInt(key, value);
   }
 }

@@ -3,8 +3,12 @@ import 'package:gym_partener/form_screen.dart';
 import 'package:gym_partener/history_screen.dart';
 import 'package:gym_partener/home_screen.dart';
 import 'package:gym_partener/progress_screen.dart';
+import 'package:gym_partener/shared_pref.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SharedPref.instance.getPrefs();
+
   runApp(const GymPartner());
 }
 

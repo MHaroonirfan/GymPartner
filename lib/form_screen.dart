@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:gym_partener/shared_pref.dart';
 
 class FormScreen extends StatefulWidget {
   const FormScreen({super.key});
@@ -9,20 +10,38 @@ class FormScreen extends StatefulWidget {
 }
 
 class _FormScreenState extends State<FormScreen> {
+  // bool jkl = false;
+
   List<int> ageList = List.generate(84, (index) => index + 16);
-  int age = 0;
+  int age = SharedPref.instance.getIntValue("age") ?? 25;
 
   List<int> feetList = List.generate(7, (index) => index + 3);
-  int heightFeet = 5;
+  int heightFeet = SharedPref.instance.getIntValue("height_feet") ?? 5;
 
   List<int> inchList = List.generate(12, (index) => index + 1);
-  int heightInches = 0;
+  int heightInches = SharedPref.instance.getIntValue("height_inches") ?? 0;
 
   List<int> kList = List.generate(120, (index) => index + 30);
-  int weightK = 20;
+  int weightK = SharedPref.instance.getIntValue("weight_kilo") ?? 50;
 
-  List<int> gList = List.generate(100, (index) => index);
-  int weightG = 0;
+  List<int> gList = List.generate(99, (index) => index);
+  int weightG = SharedPref.instance.getIntValue("weight_gram") ?? 0;
+
+  String userName = SharedPref.instance.getStringValue("name") ?? "";
+
+  final TextEditingController _controller = TextEditingController();
+
+  List<String> days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+  ];
+
+  List<bool> daysSwitch = [false, false, false, false, false, false, false];
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +56,7 @@ class _FormScreenState extends State<FormScreen> {
         )),
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-          onPressed: () => {},
+          onPressed: saveUserData,
           child: const Text(
             "Save",
             style: TextStyle(fontSize: 28, color: Colors.green),
@@ -51,10 +70,22 @@ class _FormScreenState extends State<FormScreen> {
   }
 
   List<Widget> getFormWidgets() {
+    _controller.text = userName;
     return [
       Padding(
           padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
           child: TextField(
+            buildCounter: (context,
+                    {required currentLength,
+                    required isFocused,
+                    required maxLength}) =>
+                null,
+            autofocus: true,
+            maxLength: 64,
+            controller: _controller,
+            onChanged: (value) {
+              userName = value;
+            },
             decoration: InputDecoration(
                 labelText: "Name",
                 labelStyle:
@@ -161,39 +192,6 @@ class _FormScreenState extends State<FormScreen> {
     ];
   }
 
-  List<Widget> getFormDays() {
-    List<Widget> result = [];
-    List<String> days = [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday"
-    ];
-    for (var i = 0; i < days.length; i++) {
-      result.add(Padding(
-          padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
-          child: Container(
-              padding: const EdgeInsets.fromLTRB(10, 0, 5, 0),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all()),
-              child: Row(
-                children: [
-                  Expanded(
-                      child: Text(
-                    days[i],
-                    style: const TextStyle(fontSize: 20),
-                  )),
-                  Switch(value: false, onChanged: (s) => {})
-                ],
-              ))));
-    }
-    return result;
-  }
-
   void _showAgePicker() {
     showModalBottomSheet(
         context: context,
@@ -207,19 +205,25 @@ class _FormScreenState extends State<FormScreen> {
                 ),
               ),
               Expanded(
-                  child: Padding(
-                      padding: const EdgeInsets.only(left: 100, right: 100),
+                  child: SizedBox(
+                      width: 250,
+                      height: 350,
                       child: CupertinoPicker(
                           itemExtent: 30,
                           magnification: 1.25,
-                          onSelectedItemChanged: (index) => {},
+                          scrollController: FixedExtentScrollController(
+                              initialItem: ageList.indexOf(age)),
+                          onSelectedItemChanged: (index) {
+                            setState(() {
+                              age = ageList[index];
+                            });
+                          },
                           selectionOverlay:
                               const CupertinoPickerDefaultSelectionOverlay(
                             background: Color.fromARGB(125, 31, 105, 32),
                           ),
                           children: List<Widget>.generate(ageList.length,
                               (index) => Text(ageList[index].toString()))))),
-              const SizedBox(height: 40)
             ],
           );
         });
@@ -250,7 +254,13 @@ class _FormScreenState extends State<FormScreen> {
                               ),
                               itemExtent: 30,
                               magnification: 1.25,
-                              onSelectedItemChanged: (index) => {},
+                              onSelectedItemChanged: (index) {
+                                setState(() {
+                                  weightK = kList[index];
+                                });
+                              },
+                              scrollController: FixedExtentScrollController(
+                                  initialItem: kList.indexOf(weightK)),
                               children:
                                   List<Widget>.generate(kList.length, (index) {
                                 return Center(
@@ -270,7 +280,13 @@ class _FormScreenState extends State<FormScreen> {
                               ),
                               itemExtent: 30,
                               magnification: 1.25,
-                              onSelectedItemChanged: (index) => {},
+                              scrollController: FixedExtentScrollController(
+                                  initialItem: gList.indexOf(weightG)),
+                              onSelectedItemChanged: (index) {
+                                setState(() {
+                                  weightG = gList[index];
+                                });
+                              },
                               children:
                                   List<Widget>.generate(gList.length, (index) {
                                 return Center(
@@ -297,8 +313,9 @@ class _FormScreenState extends State<FormScreen> {
               ),
             ),
             Expanded(
-                child: Padding(
-                    padding: const EdgeInsets.only(left: 50, right: 50),
+                child: SizedBox(
+                    width: 250,
+                    height: 350,
                     child: Row(children: [
                       Expanded(
                           child: CupertinoPicker(
@@ -308,10 +325,14 @@ class _FormScreenState extends State<FormScreen> {
                                 capEndEdge: false,
                               ),
                               itemExtent: 30,
-                              scrollController:
-                                  FixedExtentScrollController(initialItem: 0),
+                              scrollController: FixedExtentScrollController(
+                                  initialItem: feetList.indexOf(heightFeet)),
                               magnification: 1.25,
-                              onSelectedItemChanged: (index) => {},
+                              onSelectedItemChanged: (index) {
+                                setState(() {
+                                  heightFeet = feetList[index];
+                                });
+                              },
                               children: List<Widget>.generate(feetList.length,
                                   (index) {
                                 return Center(
@@ -320,6 +341,8 @@ class _FormScreenState extends State<FormScreen> {
                               }))),
                       Expanded(
                           child: CupertinoPicker(
+                              scrollController: FixedExtentScrollController(
+                                  initialItem: inchList.indexOf(heightInches)),
                               selectionOverlay:
                                   const CupertinoPickerDefaultSelectionOverlay(
                                 background: Color.fromARGB(125, 31, 105, 32),
@@ -327,7 +350,11 @@ class _FormScreenState extends State<FormScreen> {
                               ),
                               itemExtent: 30,
                               magnification: 1.25,
-                              onSelectedItemChanged: (index) => {},
+                              onSelectedItemChanged: (index) {
+                                setState(() {
+                                  heightInches = inchList[index];
+                                });
+                              },
                               children: List<Widget>.generate(inchList.length,
                                   (index) {
                                 return Center(
@@ -337,5 +364,51 @@ class _FormScreenState extends State<FormScreen> {
                     ]))),
           ]);
         });
+  }
+
+  List<Widget> getFormDays() {
+    List<Widget> result = [];
+
+    for (var i = 0; i < days.length; i++) {
+      result.add(Padding(
+          padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+          child: Container(
+              padding: const EdgeInsets.fromLTRB(10, 0, 5, 0),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all()),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: Text(
+                    days[i],
+                    style: const TextStyle(fontSize: 20),
+                  )),
+                  Switch(
+                    value: daysSwitch[i],
+                    onChanged: (boolValue) {
+                      setState(() {
+                        daysSwitch[i] = boolValue;
+                      });
+                    },
+                  )
+                ],
+              ))));
+    }
+    return result;
+  }
+
+  void saveUserData() {
+    SharedPref.instance.setStringValue("name", userName);
+
+    SharedPref.instance.setIntValue("age", age);
+
+    SharedPref.instance.setIntValue("height_feet", heightFeet);
+
+    SharedPref.instance.setIntValue("height_inches", heightInches);
+
+    SharedPref.instance.setIntValue("weight_kilo", weightK);
+
+    SharedPref.instance.setIntValue("weight_gram", weightG);
   }
 }
