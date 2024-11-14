@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gym_partener/database.dart';
 import 'package:gym_partener/shared_pref.dart';
 
 class FormScreen extends StatefulWidget {
@@ -10,21 +12,19 @@ class FormScreen extends StatefulWidget {
 }
 
 class _FormScreenState extends State<FormScreen> {
-  // bool jkl = false;
-
   List<int> ageList = List.generate(84, (index) => index + 16);
   int age = SharedPref.instance.getIntValue("age") ?? 25;
 
   List<int> feetList = List.generate(7, (index) => index + 3);
   int heightFeet = SharedPref.instance.getIntValue("height_feet") ?? 5;
 
-  List<int> inchList = List.generate(12, (index) => index + 1);
-  int heightInches = SharedPref.instance.getIntValue("height_inches") ?? 0;
+  List<int> inchList = List.generate(13, (index) => index);
+  int heightInches = SharedPref.instance.getIntValue("height_inches") ?? 6;
 
   List<int> kList = List.generate(120, (index) => index + 30);
   int weightK = SharedPref.instance.getIntValue("weight_kilo") ?? 50;
 
-  List<int> gList = List.generate(99, (index) => index);
+  List<int> gList = List.generate(100, (index) => index);
   int weightG = SharedPref.instance.getIntValue("weight_gram") ?? 0;
 
   String userName = SharedPref.instance.getStringValue("name") ?? "";
@@ -42,6 +42,12 @@ class _FormScreenState extends State<FormScreen> {
   ];
 
   List<bool> daysSwitch = [false, false, false, false, false, false, false];
+
+  @override
+  void initState() {
+    super.initState();
+    changeSwitches();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -398,17 +404,45 @@ class _FormScreenState extends State<FormScreen> {
     return result;
   }
 
-  void saveUserData() {
-    SharedPref.instance.setStringValue("name", userName);
+  Future<void> changeSwitches() async {
+    for (var i = 0; i < days.length; i++) {
+      Map<String, dynamic>? dbRes =
+          await DatabaseHandler.instance.getFromDB("Days", "day", days[i]);
+      if (dbRes != null) {
+        setState(() {
+          daysSwitch[i] = true;
+        });
+      }
+    }
+  }
 
-    SharedPref.instance.setIntValue("age", age);
+  void saveUserData() async {
+    String trimmed = userName.trim();
+    if (trimmed == "") {
+      Fluttertoast.showToast(
+          msg: "Please Give a Name!",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.SNACKBAR);
+    } else {
+      SharedPref.instance.setStringValue("name", userName);
 
-    SharedPref.instance.setIntValue("height_feet", heightFeet);
+      SharedPref.instance.setIntValue("age", age);
 
-    SharedPref.instance.setIntValue("height_inches", heightInches);
+      SharedPref.instance.setIntValue("height_feet", heightFeet);
 
-    SharedPref.instance.setIntValue("weight_kilo", weightK);
+      SharedPref.instance.setIntValue("height_inches", heightInches);
 
-    SharedPref.instance.setIntValue("weight_gram", weightG);
+      SharedPref.instance.setIntValue("weight_kilo", weightK);
+
+      SharedPref.instance.setIntValue("weight_gram", weightG);
+
+      for (var i = 0; i < days.length; i++) {
+        if (daysSwitch[i]) {
+          await DatabaseHandler.instance.insertInDB("Days", {"day": days[i]});
+        } else {
+          await DatabaseHandler.instance.deleteARow("Days", "day", days[i]);
+        }
+      }
+    }
   }
 }

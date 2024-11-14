@@ -26,7 +26,7 @@ class DatabaseHandler {
       version: 1,
       onCreate: (db, version) async {
         await db.execute(
-            "CREATE TABLE Days (day_id INTEGER PRIMARY KEY, day TEXT)");
+            "CREATE TABLE Days (day_id INTEGER PRIMARY KEY, day TEXT UNIQUE)");
         await db.execute(
             "CREATE TABLE Excercises (id INTEGER PRIMARY KEY, name TEXT, weight INTEGER, sets INTEGER, reps INTEGER,duration INTEGER, day_id INTEGER, FOREIGN KEY (day_id) REFERENCES Days(day_id) ON DELETE CASCADE)");
 
@@ -36,5 +36,26 @@ class DatabaseHandler {
             "CREATE TABLE done_Excercises (id INTEGER PRIMARY KEY, name TEXT, weight INTEGER, sets INTEGER, reps INTEGER,day_id INTEGER, FOREIGN KEY (day_id) REFERENCES PrevDays(day_id) ON DELETE CASCADE)");
       },
     );
+  }
+
+  Future insertInDB(String table, Map<String, dynamic> values) async {
+    await _database!
+        .insert(table, values, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<Map<String, dynamic>?> getFromDB(
+      String table, String whereKey, dynamic whereArg) async {
+    List<Map<String, dynamic>> result = await _database!
+        .query(table, where: "$whereKey = ?", whereArgs: [whereArg]);
+
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return null;
+    }
+  }
+
+  Future deleteARow(String table, String whereKey, dynamic whereArg) async {
+    await _database!.delete(table, where: "$whereKey = ?", whereArgs: whereArg);
   }
 }

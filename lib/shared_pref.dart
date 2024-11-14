@@ -7,13 +7,8 @@ class SharedPref {
 
   SharedPref._init();
 
-  Future<SharedPreferences> getPrefs() async {
-    if (_preferences != null) {
-      return _preferences!;
-    } else {
-      _preferences = await SharedPreferences.getInstance();
-      return _preferences!;
-    }
+  Future<void> initPrefs() async {
+    _preferences ??= await SharedPreferences.getInstance();
   }
 
   String? getStringValue(String key) {

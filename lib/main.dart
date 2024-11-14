@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_partener/database.dart';
 import 'package:gym_partener/form_screen.dart';
 import 'package:gym_partener/history_screen.dart';
 import 'package:gym_partener/home_screen.dart';
@@ -7,7 +8,8 @@ import 'package:gym_partener/shared_pref.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SharedPref.instance.getPrefs();
+  await DatabaseHandler.instance.getDatabase();
+  await SharedPref.instance.initPrefs();
 
   runApp(const GymPartner());
 }
