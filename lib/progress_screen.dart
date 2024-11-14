@@ -11,7 +11,7 @@ class PreogressScreen extends StatefulWidget {
 }
 
 class _PreogressScreenState extends State<PreogressScreen> {
-  Widget chartWidget = DaysChart();
+  Widget chartWidget = const DaysChart();
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class _PreogressScreenState extends State<PreogressScreen> {
                       ElevatedButton.styleFrom(backgroundColor: Colors.black),
                   onPressed: () => {
                     setState(() {
-                      chartWidget = DaysChart();
+                      chartWidget = const DaysChart();
                     })
                   },
                   child: const Text(
@@ -44,7 +44,7 @@ class _PreogressScreenState extends State<PreogressScreen> {
                       ElevatedButton.styleFrom(backgroundColor: Colors.black),
                   onPressed: () => {
                     setState(() {
-                      chartWidget = ExercisesChart();
+                      chartWidget = const ExercisesChart();
                     })
                   },
                   child: const Text(

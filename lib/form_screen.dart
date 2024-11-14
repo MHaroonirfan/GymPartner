@@ -21,7 +21,7 @@ class _FormScreenState extends State<FormScreen> {
   List<int> kList = List.generate(120, (index) => index + 30);
   int weightK = 20;
 
-  List<int> gList = List.generate(20, (index) => index * 50);
+  List<int> gList = List.generate(100, (index) => index);
   int weightG = 0;
 
   @override
@@ -66,17 +66,20 @@ class _FormScreenState extends State<FormScreen> {
       Padding(
           padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
           child: Container(
+            decoration: BoxDecoration(
+                border: Border.all(width: 0.75),
+                borderRadius: BorderRadius.circular(10)),
             child: Row(
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
-                Expanded(
+                const Expanded(
                     child: Text(
                   "Age",
                   style: TextStyle(fontSize: 24),
                 )),
-                Spacer(),
+                const Spacer(),
                 Expanded(
                     child: GestureDetector(
                         onTap: () {
@@ -84,79 +87,74 @@ class _FormScreenState extends State<FormScreen> {
                         },
                         child: Text(
                           age.toString(),
-                          style: TextStyle(fontSize: 24),
+                          style: const TextStyle(fontSize: 24),
                         )))
               ],
             ),
-            decoration: BoxDecoration(
-                border: Border.all(width: 0.75),
-                borderRadius: BorderRadius.circular(10)),
           )),
       Padding(
           padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
           child: Container(
+            decoration: BoxDecoration(
+                border: Border.all(width: 0.75),
+                borderRadius: BorderRadius.circular(10)),
             child: Row(
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
-                Expanded(
+                const Expanded(
                     child: Text(
                   "Weight",
                   style: TextStyle(fontSize: 24),
                 )),
-                Spacer(),
+                const Spacer(),
                 Expanded(
                     child: GestureDetector(
                         onTap: () {
                           _showWeightPicker();
                         },
                         child: Text(
-                          weightK.toString() + "." + weightG.toString(),
-                          style: TextStyle(fontSize: 24),
+                          "$weightK.$weightG",
+                          style: const TextStyle(fontSize: 24),
                         )))
               ],
             ),
-            decoration: BoxDecoration(
-                border: Border.all(width: 0.75),
-                borderRadius: BorderRadius.circular(10)),
           )),
       Padding(
           padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
           child: Container(
+            decoration: BoxDecoration(
+                border: Border.all(width: 0.75),
+                borderRadius: BorderRadius.circular(10)),
             child: Row(
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
-                Expanded(
+                const Expanded(
                     child: Text(
                   "Height",
                   style: TextStyle(fontSize: 24),
                 )),
-                Spacer(),
+                const Spacer(),
                 Expanded(
                     child: GestureDetector(
                         onTap: () {
                           _showHeightPicker();
                         },
                         child: Text(
-                          heightFeet.toString() +
-                              " : " +
-                              heightInches.toString(),
-                          style: TextStyle(fontSize: 24),
+                          "$heightFeet : $heightInches",
+                          style: const TextStyle(fontSize: 24),
                         )))
               ],
             ),
-            decoration: BoxDecoration(
-                border: Border.all(width: 0.75),
-                borderRadius: BorderRadius.circular(10)),
           )),
       Container(
         height: 10,
-        decoration: BoxDecoration(border: Border(bottom: BorderSide())),
+        decoration: const BoxDecoration(border: Border(bottom: BorderSide())),
       ),
-      SizedBox(
+      const SizedBox(
         height: 5,
       ),
       Column(children: getFormDays())
@@ -202,23 +200,26 @@ class _FormScreenState extends State<FormScreen> {
         builder: (context) {
           return Column(
             children: [
-              Center(
+              const Center(
                 child: Text(
                   "Pick Your Age",
                   style: TextStyle(fontSize: 32),
                 ),
               ),
               Expanded(
-                  child: CupertinoPicker(
-                      itemExtent: 30,
-                      magnification: 1.25,
-                      onSelectedItemChanged: (index) => {},
-                      selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
-                        background: const Color.fromARGB(125, 31, 105, 32),
-                      ),
-                      children: List<Widget>.generate(ageList.length,
-                          (index) => Text(ageList[index].toString())))),
-              SizedBox(height: 40)
+                  child: Padding(
+                      padding: const EdgeInsets.only(left: 100, right: 100),
+                      child: CupertinoPicker(
+                          itemExtent: 30,
+                          magnification: 1.25,
+                          onSelectedItemChanged: (index) => {},
+                          selectionOverlay:
+                              const CupertinoPickerDefaultSelectionOverlay(
+                            background: Color.fromARGB(125, 31, 105, 32),
+                          ),
+                          children: List<Widget>.generate(ageList.length,
+                              (index) => Text(ageList[index].toString()))))),
+              const SizedBox(height: 40)
             ],
           );
         });
@@ -229,50 +230,56 @@ class _FormScreenState extends State<FormScreen> {
         context: context,
         builder: (context) {
           return Column(children: [
-            Center(
+            const Center(
               child: Text(
                 "Pick your Weight",
                 style: TextStyle(fontSize: 32),
               ),
             ),
             Expanded(
-                child: Padding(
-                    padding: EdgeInsets.only(left: 50, right: 50),
+                child: SizedBox(
+                    width: 250,
+                    height: 300,
                     child: Row(children: [
                       Expanded(
                           child: CupertinoPicker(
                               selectionOverlay:
-                                  CupertinoPickerDefaultSelectionOverlay(
-                                background:
-                                    const Color.fromARGB(125, 31, 105, 32),
+                                  const CupertinoPickerDefaultSelectionOverlay(
+                                background: Color.fromARGB(125, 31, 105, 32),
                                 capEndEdge: false,
                               ),
                               itemExtent: 30,
                               magnification: 1.25,
                               onSelectedItemChanged: (index) => {},
-                              children: List<Widget>.generate(ageList.length,
-                                  (index) {
+                              children:
+                                  List<Widget>.generate(kList.length, (index) {
                                 return Center(
-                                  child: Text(ageList[index].toString()),
+                                  child: Text(kList[index].toString()),
                                 );
                               }))),
+                      const Text(
+                        ".",
+                        style: TextStyle(fontSize: 24),
+                      ),
                       Expanded(
                           child: CupertinoPicker(
                               selectionOverlay:
-                                  CupertinoPickerDefaultSelectionOverlay(
-                                background:
-                                    const Color.fromARGB(125, 31, 105, 32),
+                                  const CupertinoPickerDefaultSelectionOverlay(
+                                background: Color.fromARGB(125, 31, 105, 32),
                                 capStartEdge: false,
                               ),
                               itemExtent: 30,
                               magnification: 1.25,
                               onSelectedItemChanged: (index) => {},
-                              children: List<Widget>.generate(ageList.length,
-                                  (index) {
+                              children:
+                                  List<Widget>.generate(gList.length, (index) {
                                 return Center(
-                                  child: Text(ageList[index].toString()),
+                                  child: Text(gList[index] < 10
+                                      ? "0${gList[index]}"
+                                      : gList[index].toString()),
                                 );
-                              })))
+                              }))),
+                      const Text("KG")
                     ]))),
           ]);
         });
@@ -283,7 +290,7 @@ class _FormScreenState extends State<FormScreen> {
         context: context,
         builder: (context) {
           return Column(children: [
-            Center(
+            const Center(
               child: Text(
                 "Pick your Height",
                 style: TextStyle(fontSize: 32),
@@ -291,14 +298,13 @@ class _FormScreenState extends State<FormScreen> {
             ),
             Expanded(
                 child: Padding(
-                    padding: EdgeInsets.only(left: 50, right: 50),
+                    padding: const EdgeInsets.only(left: 50, right: 50),
                     child: Row(children: [
                       Expanded(
                           child: CupertinoPicker(
                               selectionOverlay:
-                                  CupertinoPickerDefaultSelectionOverlay(
-                                background:
-                                    const Color.fromARGB(125, 31, 105, 32),
+                                  const CupertinoPickerDefaultSelectionOverlay(
+                                background: Color.fromARGB(125, 31, 105, 32),
                                 capEndEdge: false,
                               ),
                               itemExtent: 30,
@@ -315,9 +321,8 @@ class _FormScreenState extends State<FormScreen> {
                       Expanded(
                           child: CupertinoPicker(
                               selectionOverlay:
-                                  CupertinoPickerDefaultSelectionOverlay(
-                                background:
-                                    const Color.fromARGB(125, 31, 105, 32),
+                                  const CupertinoPickerDefaultSelectionOverlay(
+                                background: Color.fromARGB(125, 31, 105, 32),
                                 capStartEdge: false,
                               ),
                               itemExtent: 30,

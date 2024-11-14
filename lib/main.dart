@@ -140,7 +140,7 @@ class _AppHomeScreenState extends State<AppHomeScreen> {
           ListTile(
             selectedColor: Colors.blue,
             selected: _selectedIndex == 0 ? true : false,
-            leading: Icon(Icons.home),
+            leading: const Icon(Icons.home),
             title: const Text("Home"),
             onTap: () {
               _itemTapped(0);
@@ -150,7 +150,7 @@ class _AppHomeScreenState extends State<AppHomeScreen> {
           ListTile(
             selectedColor: Colors.blue,
             selected: _selectedIndex == 1 ? true : false,
-            leading: Icon(Icons.auto_graph),
+            leading: const Icon(Icons.auto_graph),
             title: const Text("Progress"),
             onTap: () {
               _itemTapped(1);
@@ -160,7 +160,7 @@ class _AppHomeScreenState extends State<AppHomeScreen> {
           ListTile(
             selectedColor: Colors.blue,
             selected: _selectedIndex == 2 ? true : false,
-            leading: Icon(Icons.history_outlined),
+            leading: const Icon(Icons.history_outlined),
             title: const Text("History"),
             onTap: () {
               _itemTapped(2);

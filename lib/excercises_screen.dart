@@ -74,7 +74,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Column(children: [
+                              Column(children: const [
                                 Text(
                                   "Weight Lifting",
                                   style: TextStyle(
@@ -122,7 +122,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
             title: Text("Add/Edit Exercise"),
             content: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [
+              children: const [
                 Text("Exercise Name:"),
               ],
             ),
