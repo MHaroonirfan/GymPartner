@@ -79,6 +79,41 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
           padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
           child: Center(
               child: GestureDetector(
+                  onLongPress: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog.adaptive(
+                            title: Text(
+                              "Delete This exercise",
+                              style: TextStyle(fontSize: 24),
+                            ),
+                            actions: [
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    "Cancel",
+                                    style: TextStyle(color: Colors.blue),
+                                  )),
+                              TextButton(
+                                  onPressed: () async {
+                                    await DatabaseHandler.instance.deleteARow(
+                                        "Excercises", "ex_id", thisEx["ex_id"]);
+                                    setState(() {
+                                      exercisesList;
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    "Delete",
+                                    style: TextStyle(color: Colors.red),
+                                  )),
+                            ],
+                          );
+                        });
+                  },
                   onTap: () {
                     showExercisePopUp(
                         exName: thisEx["name"],
@@ -86,7 +121,8 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                         exSets: thisEx["sets"],
                         exReps: thisEx["reps"],
                         exTime: thisEx["duration"],
-                        exID: thisEx["ex_id"]);
+                        exID: thisEx["ex_id"],
+                        updating: true);
                   },
                   child: Align(
                       alignment: Alignment.topLeft,
@@ -154,6 +190,8 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
       int exTime = 10,
       int exID = 0,
       bool updating = false}) {
+    TextEditingController _controller = TextEditingController();
+    _controller.text = exName;
     showDialog(
         context: context,
         builder: (context) {
@@ -165,7 +203,9 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                 children: [
                   Row(children: [
                     Text("Exercise Name:"),
-                    Expanded(child: TextField(
+                    Expanded(
+                        child: TextField(
+                      controller: _controller,
                       onChanged: (text) {
                         exName = text;
                       },
