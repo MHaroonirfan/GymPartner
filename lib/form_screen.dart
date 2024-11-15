@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gym_partener/database.dart';
+import 'package:gym_partener/main.dart';
 import 'package:gym_partener/shared_pref.dart';
 
 class FormScreen extends StatefulWidget {
@@ -41,7 +42,7 @@ class _FormScreenState extends State<FormScreen> {
     "Sunday"
   ];
 
-  List<bool> daysSwitch = [false, false, false, false, false, false, false];
+  List<bool> daysSwitch = [true, true, true, true, true, true, true];
 
   @override
   void initState() {
@@ -187,12 +188,18 @@ class _FormScreenState extends State<FormScreen> {
               ],
             ),
           )),
-      Container(
-        height: 10,
-        decoration: const BoxDecoration(border: Border(bottom: BorderSide())),
-      ),
       const SizedBox(
         height: 5,
+      ),
+      Divider(indent: 50, endIndent: 50),
+      Padding(
+          padding: EdgeInsets.only(left: 17.5),
+          child: Text("Select your Workout Days")),
+      Divider(
+        height: 5,
+        indent: 25,
+        endIndent: 150,
+        color: Colors.black,
       ),
       Column(children: getFormDays())
     ];
@@ -408,9 +415,9 @@ class _FormScreenState extends State<FormScreen> {
     for (var i = 0; i < days.length; i++) {
       Map<String, dynamic>? dbRes =
           await DatabaseHandler.instance.getFromDB("Days", "day", days[i]);
-      if (dbRes != null) {
+      if (dbRes == null) {
         setState(() {
-          daysSwitch[i] = true;
+          daysSwitch[i] = false;
         });
       }
     }
@@ -443,6 +450,11 @@ class _FormScreenState extends State<FormScreen> {
           await DatabaseHandler.instance.deleteARow("Days", "day", days[i]);
         }
       }
+
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => AppHomeScreen()),
+          (Route<dynamic> route) => false);
     }
   }
 }

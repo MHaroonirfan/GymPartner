@@ -56,6 +56,7 @@ class DatabaseHandler {
   }
 
   Future deleteARow(String table, String whereKey, dynamic whereArg) async {
-    await _database!.delete(table, where: "$whereKey = ?", whereArgs: whereArg);
+    await _database!
+        .delete(table, where: "$whereKey = ?", whereArgs: [whereArg]);
   }
 }
