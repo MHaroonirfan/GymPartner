@@ -55,6 +55,14 @@ class DatabaseHandler {
     }
   }
 
+  Future<List<Map<String, dynamic>>> getExercisesFromDB(
+      String table, String whereKey, dynamic whereArg) async {
+    List<Map<String, dynamic>> result = await _database!
+        .query(table, where: "$whereKey = ?", whereArgs: [whereArg]);
+
+    return result;
+  }
+
   Future deleteARow(String table, String whereKey, dynamic whereArg) async {
     await _database!
         .delete(table, where: "$whereKey = ?", whereArgs: [whereArg]);

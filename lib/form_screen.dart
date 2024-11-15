@@ -386,6 +386,7 @@ class _FormScreenState extends State<FormScreen> {
       result.add(Padding(
           padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
           child: Container(
+              height: 38,
               padding: const EdgeInsets.fromLTRB(10, 0, 5, 0),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
