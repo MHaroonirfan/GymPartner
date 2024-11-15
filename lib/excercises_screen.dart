@@ -5,7 +5,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class ExercisesScreen extends StatefulWidget {
-  const ExercisesScreen({super.key});
+  final int dayID;
+  const ExercisesScreen({super.key, required this.dayID});
 
   @override
   State<ExercisesScreen> createState() => _ExercisesScreenState();
