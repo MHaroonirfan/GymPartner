@@ -22,7 +22,6 @@ class _HomeScreenState extends State<HomeScreen> {
     "Sunday"
   ];
   Future fetchData() async {
-    // await Future.delayed(Duration(seconds: 5));
     for (var i = dayNames.length - 1; i >= 0; i--) {
       Map<String, dynamic>? dbRes =
           await DatabaseHandler.instance.getFromDB("Days", "day", dayNames[i]);
@@ -71,11 +70,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                 child: GestureDetector(
                     onTap: () async {
-                      print(dayNames[i]);
                       Map<String, dynamic>? dbRes = await DatabaseHandler
                           .instance
                           .getFromDB("Days", "day", dayNames[i]);
-                      print(dbRes);
                       int id = dbRes!["day_id"];
                       Navigator.push(
                           context,

@@ -28,7 +28,7 @@ class DatabaseHandler {
         await db.execute(
             "CREATE TABLE Days (day_id INTEGER PRIMARY KEY AUTOINCREMENT, day TEXT UNIQUE)");
         await db.execute(
-            "CREATE TABLE Excercises (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, weight INTEGER, sets INTEGER, reps INTEGER,duration INTEGER, day_id INTEGER, FOREIGN KEY (day_id) REFERENCES Days(day_id) ON DELETE CASCADE)");
+            "CREATE TABLE Excercises (ex_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, weight INTEGER, sets INTEGER, reps INTEGER,duration INTEGER, day_id INTEGER, FOREIGN KEY (day_id) REFERENCES Days(day_id) ON DELETE CASCADE)");
 
         await db.execute(
             "CREATE TABLE PrevDays (day_id INTEGER PRIMARY KEY AUTOINCREMENT, day TEXT, date TEXT)");
@@ -36,6 +36,12 @@ class DatabaseHandler {
             "CREATE TABLE DoneExcercises (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, weight INTEGER, sets INTEGER, reps INTEGER,day_id INTEGER, FOREIGN KEY (day_id) REFERENCES PrevDays(day_id) ON DELETE CASCADE)");
       },
     );
+  }
+
+  Future updateRowInDB(
+      String table, Map<String, dynamic> values, whereKey, whereArg) async {
+    await _database!
+        .update(table, values, where: "$whereKey = ?", whereArgs: [whereArg]);
   }
 
   Future insertInDB(String table, Map<String, dynamic> values) async {

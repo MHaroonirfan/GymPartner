@@ -1,8 +1,6 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gym_partener/database.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -16,11 +14,6 @@ class ExercisesScreen extends StatefulWidget {
 
 class _ExercisesScreenState extends State<ExercisesScreen> {
   List<Map<String, dynamic>> exercisesList = [];
-  String exName = "";
-  int exWeight = 10;
-  int exSets = 1;
-  int exReps = 10;
-  int exTime = 10;
 
   Future fetchData() async {
     List<Map<String, dynamic>>? list = await DatabaseHandler.instance
@@ -60,7 +53,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                   height: 2,
                 ),
                 ElevatedButton(
-                  onPressed: _showExercisePopUp,
+                  onPressed: showExercisePopUp,
                   style:
                       ElevatedButton.styleFrom(backgroundColor: Colors.black),
                   child: Text(
@@ -81,13 +74,19 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
     List<Widget> result = [];
     Random rnd = Random();
     for (var i = 0; i < exercisesList.length; i++) {
-      Map<String, dynamic> thisExercise = exercisesList[i];
+      Map<String, dynamic> thisEx = exercisesList[i];
       result.add(Padding(
           padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
           child: Center(
               child: GestureDetector(
                   onTap: () {
-                    _showExercisePopUp();
+                    showExercisePopUp(
+                        exName: thisEx["name"],
+                        exWeight: thisEx["weight"],
+                        exSets: thisEx["sets"],
+                        exReps: thisEx["reps"],
+                        exTime: thisEx["duration"],
+                        exID: thisEx["ex_id"]);
                   },
                   child: Align(
                       alignment: Alignment.topLeft,
@@ -109,27 +108,27 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                             children: [
                               Column(children: [
                                 Text(
-                                  "${thisExercise["name"]}",
+                                  "${thisEx["name"]}",
                                   style: TextStyle(
                                       fontSize: 20, color: Colors.white),
                                 ),
                                 Text(
-                                  "Weight: ${thisExercise["weight"]}",
+                                  "Weight: ${thisEx["weight"]}",
                                   style: TextStyle(
                                       fontSize: 14, color: Colors.white),
                                 ),
                                 Text(
-                                  "Sets: ${thisExercise["sets"]}",
+                                  "Sets: ${thisEx["sets"]}",
                                   style: TextStyle(
                                       fontSize: 14, color: Colors.white),
                                 ),
                                 Text(
-                                  "Reps: ${thisExercise["reps"]}",
+                                  "Reps: ${thisEx["reps"]}",
                                   style: TextStyle(
                                       fontSize: 14, color: Colors.white),
                                 ),
                                 Text(
-                                  "Time: ${thisExercise["duration"]}min",
+                                  "Time: ${thisEx["duration"]}min",
                                   style: TextStyle(
                                       fontSize: 14, color: Colors.white),
                                 )
@@ -147,98 +146,150 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
     return result;
   }
 
-  void _showExercisePopUp() {
+  void showExercisePopUp(
+      {String exName = "",
+      int exWeight = 10,
+      int exSets = 1,
+      int exReps = 10,
+      int exTime = 10,
+      int exID = 0,
+      bool updating = false}) {
     showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Add/Edit Exercise"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(children: [
-                  Text("Exercise Name:"),
-                  Expanded(child: TextField(
-                    onChanged: (text) {
-                      exName = text;
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              title: Text("Add/Edit Exercise"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(children: [
+                    Text("Exercise Name:"),
+                    Expanded(child: TextField(
+                      onChanged: (text) {
+                        exName = text;
+                      },
+                    ))
+                  ]),
+                  Row(children: [
+                    Expanded(child: Text("Weight:")),
+                    DropdownButton(
+                        value: exWeight,
+                        menuMaxHeight: 200,
+                        borderRadius: BorderRadius.circular(15),
+                        items: List.generate(200, (index) {
+                          return DropdownMenuItem<int>(
+                              value: index + 1, child: Text("${index + 1}"));
+                        }),
+                        onChanged: (value) {
+                          setState(() {
+                            exWeight = value!;
+                          });
+                        }),
+                    Text("KG")
+                  ]),
+                  Row(children: [
+                    Expanded(child: Text("Sets:")),
+                    DropdownButton(
+                        value: exSets,
+                        menuMaxHeight: 200,
+                        borderRadius: BorderRadius.circular(15),
+                        items: List.generate(20, (index) {
+                          return DropdownMenuItem<int>(
+                              value: index + 1, child: Text("${index + 1}"));
+                        }),
+                        onChanged: (value) {
+                          setState(() {
+                            exSets = value!;
+                          });
+                        }),
+                  ]),
+                  Row(children: [
+                    Expanded(child: Text("Reps:")),
+                    DropdownButton(
+                        value: exReps,
+                        menuMaxHeight: 200,
+                        borderRadius: BorderRadius.circular(15),
+                        items: List.generate(200, (index) {
+                          return DropdownMenuItem<int>(
+                              value: index + 1, child: Text("${index + 1}"));
+                        }),
+                        onChanged: (value) {
+                          setState(() {
+                            exReps = value!;
+                          });
+                        }),
+                  ]),
+                  Row(children: [
+                    Expanded(child: Text("Duration:")),
+                    DropdownButton(
+                        value: exTime,
+                        menuMaxHeight: 200,
+                        borderRadius: BorderRadius.circular(15),
+                        items: List.generate(59, (index) {
+                          return DropdownMenuItem<int>(
+                              value: index + 1, child: Text("${index + 1}"));
+                        }),
+                        onChanged: (value) {
+                          setState(() {
+                            exTime = value!;
+                          });
+                        }),
+                    Text("min")
+                  ])
+                ],
+              ),
+              contentPadding: EdgeInsets.all(10),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
                     },
-                  ))
-                ]),
-                Row(children: [
-                  Expanded(child: Text("Weight:")),
-                  DropdownButton(
-                      value: exWeight,
-                      items: List.generate(200, (index) {
-                        return DropdownMenuItem<int>(
-                            value: index + 1, child: Text("${index + 1}"));
-                      }),
-                      onChanged: (value) {
-                        setState(() {
-                          exWeight = value!;
-                          print(exWeight);
+                    child: Text("Cancel")),
+                TextButton(
+                    onPressed: () {
+                      String trimmed = exName.trim();
+                      if (trimmed == "") {
+                        Fluttertoast.showToast(
+                            msg: "Please! Give Exercise Name",
+                            toastLength: Toast.LENGTH_LONG,
+                            gravity: ToastGravity.BOTTOM);
+                      } else if (updating) {
+                        DatabaseHandler.instance.updateRowInDB(
+                            "Excercises",
+                            {
+                              "name": trimmed,
+                              "weight": exWeight,
+                              "sets": exSets,
+                              "reps": exReps,
+                              "duration": exTime,
+                              "day_id": widget.dayID
+                            },
+                            "ex_id",
+                            exID);
+                        super.setState(() {
+                          exercisesList;
                         });
-                      }),
-                  Text("KG")
-                ]),
-                Row(children: [
-                  Expanded(child: Text("Sets:")),
-                  DropdownButton(
-                      value: exSets,
-                      items: List.generate(20, (index) {
-                        return DropdownMenuItem<int>(
-                            value: index + 1, child: Text("${index + 1}"));
-                      }),
-                      onChanged: (value) {
-                        setState(() {
-                          exSets = value!;
+                        Navigator.pop(context);
+                      } else {
+                        DatabaseHandler.instance.insertInDB("Excercises", {
+                          "name": trimmed,
+                          "weight": exWeight,
+                          "sets": exSets,
+                          "reps": exReps,
+                          "duration": exTime,
+                          "day_id": widget.dayID
                         });
-                      }),
-                ]),
-                Row(children: [
-                  Expanded(child: Text("Reps:")),
-                  DropdownButton(
-                      value: 1,
-                      items: List.generate(200, (index) {
-                        return DropdownMenuItem<int>(
-                            value: index + 1, child: Text("${index + 1}"));
-                      }),
-                      onChanged: (value) {
-                        setState(() {
-                          exReps = value!;
+                        super.setState(() {
+                          exercisesList;
                         });
-                      }),
-                ]),
-                Row(children: [
-                  Expanded(child: Text("Duration:")),
-                  DropdownButton(
-                      value: 10,
-                      items: List.generate(59, (index) {
-                        return DropdownMenuItem<int>(
-                            value: index + 1, child: Text("${index + 1}"));
-                      }),
-                      onChanged: (value) {
-                        setState(() {
-                          exTime = value!;
-                        });
-                      }),
-                  Text("min")
-                ])
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: Text("OK"))
               ],
-            ),
-            contentPadding: EdgeInsets.all(10),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text("Cancel")),
-              TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text("OK"))
-            ],
-          );
+            );
+          });
         });
   }
 }
