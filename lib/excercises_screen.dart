@@ -241,7 +241,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
     print(trimmed);
     controller.text = exName;
     Map<String, dynamic>? checkSave =
-        await DatabaseHandler.instance.getFromDB("Excercises", "name", trimmed);
+        await DatabaseHandler.instance.getFromDB("Excercises", "name", exName);
     int prevDayId = await getPrevDayId();
     showDialog(
         context: context,
@@ -254,14 +254,18 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                 children: [
                   Row(children: [
                     Text("Exercise Name:"),
-                    Expanded(
-                        child: TextField(
-                      controller: controller,
-                      onChanged: (text) {
-                        exName = text;
-                        trimmed = exName.trim();
-                      },
-                    ))
+                    saving
+                        ? Expanded(
+                            child: Row(
+                                children: [Spacer(), Text(exName), Spacer()]))
+                        : Expanded(
+                            child: TextField(
+                            controller: controller,
+                            onChanged: (text) {
+                              exName = text;
+                              trimmed = exName.trim();
+                            },
+                          ))
                   ]),
                   Row(children: [
                     Expanded(child: Text("Weight:")),
@@ -363,7 +367,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                         });
                         Navigator.pop(context);
                       } else if (saving) {
-                        if (checkSave != null) {
+                        if (checkSave == null) {
                           DatabaseHandler.instance
                               .insertInDB("DoneExcercises", {
                             "name": trimmed,
@@ -383,6 +387,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                               msg: "Excercise Saved Already",
                               gravity: ToastGravity.BOTTOM,
                               toastLength: Toast.LENGTH_LONG);
+                          Navigator.pop(context);
                         }
                       } else {
                         DatabaseHandler.instance.insertInDB("Excercises", {

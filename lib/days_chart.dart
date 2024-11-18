@@ -158,8 +158,10 @@ class _DaysChartState extends State<DaysChart> {
         fullVolume = fullVolume + (sets + reps + weight);
       }
     }
-    yLen = max(yLen, (fullVolume / exercises.length).ceil());
+    yLen = exercises.isEmpty
+        ? yLen
+        : max(yLen, (fullVolume / exercises.length).ceil());
 
-    return fullVolume ~/ exercises.length;
+    return exercises.isEmpty ? 0 : fullVolume ~/ exercises.length;
   }
 }
