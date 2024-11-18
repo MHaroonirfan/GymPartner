@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gym_partener/colors.dart';
 import 'package:gym_partener/database.dart';
 import 'package:intl/intl.dart';
 
@@ -165,11 +166,8 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                           padding: const EdgeInsets.only(left: 20, top: 25),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: Color.fromRGBO(
-                                (15 + rnd.nextInt(225)),
-                                (15 + rnd.nextInt(235)),
-                                (15 + rnd.nextInt(225)),
-                                1),
+                            color: CustomColors.cColors[
+                                rnd.nextInt(CustomColors.cColors.length)],
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,7 +176,9 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                                 Text(
                                   "${thisEx["name"]}",
                                   style: TextStyle(
-                                      fontSize: 20, color: Colors.white),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white),
                                 ),
                                 Text(
                                   "Weight: ${thisEx["weight"]}",
@@ -202,19 +202,24 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                                 )
                               ]),
                               if (isToday)
-                                IconButton(
-                                    onPressed: () {
-                                      showExercisePopUp(
-                                          exName: thisEx["name"],
-                                          exWeight: thisEx["weight"],
-                                          exSets: thisEx["sets"],
-                                          exReps: thisEx["reps"],
-                                          exTime: thisEx["duration"],
-                                          exID: thisEx["ex_id"],
-                                          saving: true);
-                                    },
-                                    icon:
-                                        Icon(Icons.done, color: Colors.green)),
+                                CircleAvatar(
+                                    backgroundColor: Colors.blue[100],
+                                    child: IconButton(
+                                        iconSize: 30,
+                                        onPressed: () {
+                                          showExercisePopUp(
+                                              exName: thisEx["name"],
+                                              exWeight: thisEx["weight"],
+                                              exSets: thisEx["sets"],
+                                              exReps: thisEx["reps"],
+                                              exTime: thisEx["duration"],
+                                              exID: thisEx["ex_id"],
+                                              saving: true);
+                                        },
+                                        icon: Icon(
+                                          Icons.done,
+                                          color: Colors.green[900],
+                                        ))),
                             ],
                           )))))));
     }

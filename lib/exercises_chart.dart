@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:gym_partener/database.dart';
-import 'package:sqflite/sqflite.dart';
 
 class ExercisesChart extends StatefulWidget {
   const ExercisesChart({super.key});

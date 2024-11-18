@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:gym_partener/colors.dart';
 import 'package:gym_partener/database.dart';
 import 'package:gym_partener/excercises_screen.dart';
 
@@ -89,11 +90,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.only(left: 20, top: 30),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: Color.fromRGBO(
-                              (15 + rnd.nextInt(225)),
-                              (15 + rnd.nextInt(235)),
-                              (15 + rnd.nextInt(225)),
-                              1),
+                          color: CustomColors.cColors[
+                              rnd.nextInt(CustomColors.cColors.length)],
                         ),
                         child: Text(
                           dayNames[i],
