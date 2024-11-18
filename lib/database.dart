@@ -51,7 +51,7 @@ class DatabaseHandler {
   Future<List<Map<String, dynamic>>> getPrevDaysByName(
       String whereKey, dynamic whereArg) async {
     return _database!
-        .query("PrevDays", where: "where $whereKey = ?", whereArgs: [whereArg]);
+        .query("PrevDays", where: "$whereKey = ?", whereArgs: [whereArg]);
   }
 
   Future insertInDB(String table, Map<String, dynamic> values) async {
@@ -86,6 +86,6 @@ class DatabaseHandler {
   Future<List<Map<String, dynamic>>> getCompletedExercises(
       String dayName, String exName) {
     return _database!.query("DoneExcercises",
-        where: "day = ?, name = ?", whereArgs: [dayName, exName]);
+        where: "day = ? AND name = ?", whereArgs: [dayName, exName]);
   }
 }

@@ -14,14 +14,30 @@ void main() async {
   runApp(const GymPartner());
 }
 
+Future<bool> checkUser() async {
+  return SharedPref.instance.getStringValue("name") == null ? false : true;
+}
+
 class GymPartner extends StatelessWidget {
   const GymPartner({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: "Gym Partner",
-      home: AppHomeScreen(),
+      initialRoute: "/",
+      routes: {
+        "/": (context) => FutureBuilder<bool>(
+            future: checkUser(),
+            builder: (context, snapShot) {
+              if (snapShot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator.adaptive();
+              } else {
+                return snapShot.data! ? AppHomeScreen() : FormScreen();
+              }
+            })
+      },
+      // home: AppHomeScreen(),Jhon
     );
   }
 }

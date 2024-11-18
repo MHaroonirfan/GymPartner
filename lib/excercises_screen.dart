@@ -20,6 +20,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
   DateTime timeNow = DateTime.now();
   String dateText = "";
   String todayName = "";
+  bool isToday = false;
 
   void setToday() {
     List<String> weekdays = [
@@ -34,6 +35,9 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
 
     int today = timeNow.weekday;
     todayName = weekdays[today - 1];
+    if (todayName == widget.dayName) {
+      isToday = true;
+    }
   }
 
   Future fetchData() async {
@@ -197,18 +201,20 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                                       fontSize: 14, color: Colors.white),
                                 )
                               ]),
-                              IconButton(
-                                  onPressed: () {
-                                    showExercisePopUp(
-                                        exName: thisEx["name"],
-                                        exWeight: thisEx["weight"],
-                                        exSets: thisEx["sets"],
-                                        exReps: thisEx["reps"],
-                                        exTime: thisEx["duration"],
-                                        exID: thisEx["ex_id"],
-                                        saving: true);
-                                  },
-                                  icon: Icon(Icons.done, color: Colors.green))
+                              if (isToday)
+                                IconButton(
+                                    onPressed: () {
+                                      showExercisePopUp(
+                                          exName: thisEx["name"],
+                                          exWeight: thisEx["weight"],
+                                          exSets: thisEx["sets"],
+                                          exReps: thisEx["reps"],
+                                          exTime: thisEx["duration"],
+                                          exID: thisEx["ex_id"],
+                                          saving: true);
+                                    },
+                                    icon:
+                                        Icon(Icons.done, color: Colors.green)),
                             ],
                           )))))));
     }
@@ -225,8 +231,12 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
       bool saving = false,
       bool updating = false}) async {
     TextEditingController controller = TextEditingController();
+    String trimmed = exName.trim();
+    print("Ex : $exName");
+    print(trimmed);
     controller.text = exName;
-
+    Map<String, dynamic>? checkSave =
+        await DatabaseHandler.instance.getFromDB("Excercises", "name", trimmed);
     int prevDayId = await getPrevDayId();
     showDialog(
         context: context,
@@ -244,6 +254,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                       controller: controller,
                       onChanged: (text) {
                         exName = text;
+                        trimmed = exName.trim();
                       },
                     ))
                   ]),
@@ -324,7 +335,6 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                     child: Text("Cancel")),
                 TextButton(
                     onPressed: () {
-                      String trimmed = exName.trim();
                       if (trimmed == "") {
                         Fluttertoast.showToast(
                             msg: "Please! Give Exercise Name",
@@ -348,19 +358,27 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                         });
                         Navigator.pop(context);
                       } else if (saving) {
-                        DatabaseHandler.instance.insertInDB("DoneExcercises", {
-                          "name": trimmed,
-                          "weight": exWeight,
-                          "sets": exSets,
-                          "reps": exReps,
-                          "duration": exTime,
-                          "p_day_id": prevDayId,
-                          "day": todayName
-                        });
-                        super.setState(() {
-                          exercisesList;
-                        });
-                        Navigator.pop(context);
+                        if (checkSave != null) {
+                          DatabaseHandler.instance
+                              .insertInDB("DoneExcercises", {
+                            "name": trimmed,
+                            "weight": exWeight,
+                            "sets": exSets,
+                            "reps": exReps,
+                            "duration": exTime,
+                            "p_day_id": prevDayId,
+                            "day": todayName
+                          });
+                          super.setState(() {
+                            exercisesList;
+                          });
+                          Navigator.pop(context);
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: "Excercise Saved Already",
+                              gravity: ToastGravity.BOTTOM,
+                              toastLength: Toast.LENGTH_LONG);
+                        }
                       } else {
                         DatabaseHandler.instance.insertInDB("Excercises", {
                           "name": trimmed,

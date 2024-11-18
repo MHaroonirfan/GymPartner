@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:gym_partener/database.dart';
@@ -20,6 +22,12 @@ class _DaysChartState extends State<DaysChart> {
     "Sunday"
   ];
   String _selectedDay = "Monday";
+  List<String> dateValues = List.generate(20, (index) {
+    return "$index";
+  });
+
+  int xLen = 10;
+  int yLen = 10;
 
   List<FlSpot> lineSpots = [];
 
@@ -33,6 +41,7 @@ class _DaysChartState extends State<DaysChart> {
     }
     if (dayNames.isNotEmpty) {
       _selectedDay = dayNames[0];
+      fetchChartData();
     }
   }
 
@@ -44,9 +53,9 @@ class _DaysChartState extends State<DaysChart> {
           if (snapShot.connectionState == ConnectionState.waiting) {
             return CircularProgressIndicator.adaptive();
           } else {
-            return Column(children: [
-              StatefulBuilder(builder: (context, setState) {
-                return DropdownButton<String>(
+            return StatefulBuilder(builder: (context, setState) {
+              return Column(children: [
+                DropdownButton<String>(
                   value: _selectedDay,
                   items: List<DropdownMenuItem<String>>.generate(
                       dayNames.length, (index) {
@@ -58,35 +67,51 @@ class _DaysChartState extends State<DaysChart> {
                   onChanged: (t) {
                     setState(() {
                       _selectedDay = t!;
+                      fetchChartData();
                     });
                   },
-                );
-              }),
-              Container(
-                  padding: const EdgeInsets.only(right: 10),
-                  width: 500,
-                  height: 400,
-                  child: LineChart(
-                    LineChartData(
-                        gridData: const FlGridData(show: true),
-                        minX: 0,
-                        maxX: 10,
-                        minY: 0,
-                        maxY: 10,
-                        titlesData: const FlTitlesData(
-                          topTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false)),
-                          rightTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false)),
-                        ),
-                        lineBarsData: [
-                          LineChartBarData(
-                              spots: lineSpots,
-                              isCurved: true,
-                              color: Colors.red),
-                        ]),
-                  ))
-            ]);
+                ),
+                Container(
+                    padding: const EdgeInsets.only(right: 10),
+                    width: 500,
+                    height: 400,
+                    child: LineChart(
+                      LineChartData(
+                          gridData: const FlGridData(show: true),
+                          minX: 0,
+                          maxX: xLen.toDouble(),
+                          minY: 0,
+                          maxY: yLen.toDouble(),
+                          titlesData: FlTitlesData(
+                              topTitles: AxisTitles(
+                                  sideTitles: SideTitles(showTitles: false)),
+                              rightTitles: AxisTitles(
+                                  sideTitles: SideTitles(showTitles: false)),
+                              bottomTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                reservedSize: 50,
+                                showTitles: true,
+                                getTitlesWidget: (value, meta) {
+                                  return value.floor() + 1 > dateValues.length
+                                      ? Text("")
+                                      : Transform.rotate(
+                                          alignment: Alignment.bottomCenter,
+                                          angle: 325 * pi / 180,
+                                          child: Text(
+                                            dateValues[value.floor()],
+                                            style: TextStyle(fontSize: 10),
+                                          ));
+                                },
+                              ))),
+                          lineBarsData: [
+                            LineChartBarData(
+                                spots: lineSpots,
+                                isCurved: true,
+                                color: Colors.red),
+                          ]),
+                    ))
+              ]);
+            });
           }
         });
   }
@@ -96,20 +121,25 @@ class _DaysChartState extends State<DaysChart> {
         await DatabaseHandler.instance.getPrevDaysByName("day", _selectedDay);
 
     double xSpot = 0;
+    dateValues.clear();
+    dateValues.add("");
 
     if (dayDB.isEmpty) {
+      lineSpots.clear();
       return;
     } else {
-      int i = dayDB.length - 1;
+      int i = 0;
       int interval = 1;
       if (dayDB.length > 20) {
         interval = (dayDB.length / 20).ceil();
       }
-      while (i >= 0) {
-        double spot = (await getVolume(dayDB[i]["p_day_id"])) as double;
+      while (i < dayDB.length) {
+        dateValues.add(dayDB[i]["date"]);
+        double spot = (await getVolume(dayDB[i]["p_day_id"])).toDouble();
         xSpot++;
         lineSpots.add(FlSpot(xSpot, spot));
         i = i + interval;
+        xLen = max(xLen, i);
       }
     }
   }
@@ -125,9 +155,10 @@ class _DaysChartState extends State<DaysChart> {
         int sets = (exercises[i])["sets"];
         int reps = (exercises[i])["reps"];
         int weight = (exercises[i])["weight"];
-        fullVolume = fullVolume + (sets * reps * weight);
+        fullVolume = fullVolume + (sets + reps + weight);
       }
     }
+    yLen = max(yLen, (fullVolume / exercises.length).ceil());
 
     return fullVolume ~/ exercises.length;
   }

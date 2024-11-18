@@ -68,26 +68,29 @@ class _HistoryScreenState extends State<HistoryScreen> {
     if (exercises.isNotEmpty) {
       for (var i = 0; i < exercises.length; i++) {
         print(exercises.length);
-        result.add(Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "${exercises[i]["name"]}",
-              style: TextStyle(fontSize: 24),
-            ),
-            Row(
-              children: [
-                Text("Weight: ${exercises[i]["weight"]}",
-                    style: TextStyle(fontSize: 16)),
-                Text("Sets: ${exercises[i]["sets"]}",
-                    style: TextStyle(fontSize: 16)),
-                Text("Reps: ${exercises[i]["reps"]}",
-                    style: TextStyle(fontSize: 16)),
-                Text("Duration: ${exercises[i]["duration"]}",
-                    style: TextStyle(fontSize: 16))
-              ],
-            )
-          ],
+        result.add(Padding(
+          padding: EdgeInsets.only(left: 50),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "${exercises[i]["name"]}",
+                style: TextStyle(fontSize: 24),
+              ),
+              Row(
+                children: [
+                  Text("Weight: ${exercises[i]["weight"]}, ",
+                      style: TextStyle(fontSize: 16)),
+                  Text("Sets: ${exercises[i]["sets"]}, ",
+                      style: TextStyle(fontSize: 16)),
+                  Text("Reps: ${exercises[i]["reps"]}, ",
+                      style: TextStyle(fontSize: 16)),
+                  Text("Duration: ${exercises[i]["duration"]}",
+                      style: TextStyle(fontSize: 16))
+                ],
+              )
+            ],
+          ),
         ));
       }
     }

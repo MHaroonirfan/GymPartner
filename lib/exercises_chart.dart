@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:gym_partener/database.dart';
+import 'package:sqflite/sqflite.dart';
 
 class ExercisesChart extends StatefulWidget {
   const ExercisesChart({super.key});
@@ -21,11 +22,15 @@ class _ExercisesChartState extends State<ExercisesChart> {
     "Saturday",
     "Sunday"
   ];
-  String _selectedDay = "Monday";
+  String _selectedDay = "";
   String _selectedEx = "";
 
   int trackX = 10;
   int trackY = 10;
+
+  List<String> dateValues = List.generate(20, (index) {
+    return "$index";
+  });
 
   LineChartBarData weightData = LineChartBarData();
   LineChartBarData setsData = LineChartBarData();
@@ -59,7 +64,11 @@ class _ExercisesChartState extends State<ExercisesChart> {
     for (var i = 0; i < exercises.length; i++) {
       exercisesList.add((exercises[i]["name"]));
     }
-    _selectedEx = exercisesList[0];
+    if (exercisesList.isNotEmpty) {
+      _selectedEx = exercisesList[0];
+    } else {
+      _selectedEx = "";
+    }
   }
 
   @override
@@ -70,9 +79,9 @@ class _ExercisesChartState extends State<ExercisesChart> {
           if (snapShot.connectionState == ConnectionState.waiting) {
             return CircularProgressIndicator.adaptive();
           } else {
-            return Column(children: [
-              StatefulBuilder(builder: (context, setState) {
-                return Row(
+            return StatefulBuilder(builder: (context, setState) {
+              return Column(children: [
+                Row(
                   children: [
                     Spacer(),
                     DropdownButton<String>(
@@ -87,6 +96,8 @@ class _ExercisesChartState extends State<ExercisesChart> {
                       onChanged: (t) {
                         setState(() {
                           _selectedDay = t!;
+                          updateExercises(_selectedDay);
+                          fetchChartData();
                         });
                       },
                     ),
@@ -102,48 +113,70 @@ class _ExercisesChartState extends State<ExercisesChart> {
                       }),
                       onChanged: (t) {
                         setState(() {
+                          print("123");
                           _selectedEx = t!;
+                          print(_selectedEx);
+                          fetchChartData();
                         });
                       },
                     ),
                     Spacer()
                   ],
-                );
-              }),
-              Container(
-                  padding: const EdgeInsets.only(right: 10),
-                  width: 500,
-                  height: 400,
-                  child: LineChart(
-                    LineChartData(
-                        gridData: const FlGridData(show: true),
-                        minX: 0,
-                        maxX: trackX.toDouble(),
-                        minY: 0,
-                        maxY: trackY.toDouble(),
-                        titlesData: FlTitlesData(
-                          topTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                  showTitles: true,
-                                  getTitlesWidget: (value, meta) {
-                                    return Text(value.toString());
-                                  },
-                                  reservedSize: 32)),
-                          rightTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false)),
-                        ),
-                        lineBarsData: [
-                          weightData,
-                          setsData,
-                          repsData,
-                        ]),
-                  ))
-            ]);
+                ),
+                Container(
+                    padding: const EdgeInsets.only(right: 10),
+                    width: 500,
+                    height: 400,
+                    child: LineChart(
+                      LineChartData(
+                          gridData: const FlGridData(show: true),
+                          minX: 0,
+                          maxX: trackX.toDouble(),
+                          minY: 0,
+                          maxY: trackY.toDouble(),
+                          titlesData: FlTitlesData(
+                              topTitles: AxisTitles(
+                                  sideTitles: SideTitles(showTitles: false)),
+                              rightTitles: AxisTitles(
+                                  sideTitles: SideTitles(showTitles: false)),
+                              bottomTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                showTitles: true,
+                                reservedSize: 50,
+                                getTitlesWidget: (value, meta) {
+                                  return value.floor() + 1 > dateValues.length
+                                      ? Text("")
+                                      : Transform.rotate(
+                                          alignment: Alignment.bottomCenter,
+                                          angle: 325 * pi / 180,
+                                          child: Text(
+                                            dateValues[value.floor()],
+                                            style: TextStyle(fontSize: 10),
+                                          ));
+                                },
+                              ))),
+                          lineBarsData: [
+                            weightData,
+                            setsData,
+                            repsData,
+                          ]),
+                    ))
+              ]);
+            });
           }
         });
   }
 
   Future fetchChartData() async {
+    if (_selectedDay == "" || _selectedEx == "") {
+      // If no day or exercise selected, clear chart
+      weightData = LineChartBarData(spots: []);
+      setsData = LineChartBarData(spots: []);
+      repsData = LineChartBarData(spots: []);
+      return;
+    }
+    dateValues.clear();
+    dateValues.add("");
     List<Map<String, dynamic>> dayDB = await DatabaseHandler.instance
         .getCompletedExercises(_selectedDay, _selectedEx);
 
@@ -165,9 +198,14 @@ class _ExercisesChartState extends State<ExercisesChart> {
         double sets = dayDB[i]["sets"].toDouble();
         double reps = dayDB[i]["reps"].toDouble();
 
-        weightSpots.add(FlSpot(track as double, weight));
-        setsSpots.add(FlSpot(track as double, sets));
-        repsSpots.add(FlSpot(track as double, reps));
+        Map<String, dynamic>? prevDay = await DatabaseHandler.instance
+            .getFromDB("PrevDays", "p_day_id", dayDB[i]["p_day_id"]);
+
+        dateValues.add(prevDay!["date"]);
+
+        weightSpots.add(FlSpot(track.toDouble(), weight));
+        setsSpots.add(FlSpot(track.toDouble(), sets));
+        repsSpots.add(FlSpot(track.toDouble(), reps));
 
         trackY = max(trackY, weight.toInt());
         trackY = max(trackY, sets.toInt());
@@ -184,6 +222,10 @@ class _ExercisesChartState extends State<ExercisesChart> {
           spots: setsSpots, isCurved: true, color: Colors.blue);
       repsData = LineChartBarData(
           spots: repsSpots, isCurved: true, color: Colors.green);
+    } else {
+      weightData = LineChartBarData(spots: []);
+      setsData = LineChartBarData(spots: []);
+      repsData = LineChartBarData(spots: []);
     }
   }
 }
