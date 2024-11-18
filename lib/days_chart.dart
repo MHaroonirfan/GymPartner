@@ -57,6 +57,7 @@ class _DaysChartState extends State<DaysChart> {
               return Column(children: [
                 DropdownButton<String>(
                   value: _selectedDay,
+                  borderRadius: BorderRadius.circular(15),
                   items: List<DropdownMenuItem<String>>.generate(
                       dayNames.length, (index) {
                     return DropdownMenuItem<String>(

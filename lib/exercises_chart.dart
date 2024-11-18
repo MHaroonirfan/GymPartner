@@ -85,6 +85,7 @@ class _ExercisesChartState extends State<ExercisesChart> {
                     Spacer(),
                     DropdownButton<String>(
                       value: _selectedDay,
+                      borderRadius: BorderRadius.circular(15),
                       items: List<DropdownMenuItem<String>>.generate(
                           dayNames.length, (index) {
                         return DropdownMenuItem<String>(
@@ -103,6 +104,7 @@ class _ExercisesChartState extends State<ExercisesChart> {
                     Spacer(),
                     DropdownButton<String>(
                       value: _selectedEx,
+                      borderRadius: BorderRadius.circular(15),
                       items: List<DropdownMenuItem<String>>.generate(
                           exercisesList.length, (index) {
                         return DropdownMenuItem<String>(

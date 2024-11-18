@@ -95,7 +95,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                   ),
                 ),
                 SizedBox(
-                  height: 18,
+                  height: 40,
                 )
               ]);
             }
@@ -205,7 +205,6 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                                 CircleAvatar(
                                     backgroundColor: Colors.blue[100],
                                     child: IconButton(
-                                        iconSize: 30,
                                         onPressed: () {
                                           showExercisePopUp(
                                               exName: thisEx["name"],
@@ -218,7 +217,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                                         },
                                         icon: Icon(
                                           Icons.done,
-                                          color: Colors.green[900],
+                                          color: Colors.green,
                                         ))),
                             ],
                           )))))));
