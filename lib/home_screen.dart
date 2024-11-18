@@ -42,7 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: SizedBox(
                       width: 75,
                       height: 75,
-                      child: CircularProgressIndicator(strokeWidth: 5)));
+                      child:
+                          CircularProgressIndicator.adaptive(strokeWidth: 5)));
             } else {
               return getWidget();
             }
@@ -79,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           MaterialPageRoute(
                               builder: (context) => ExercisesScreen(
                                     dayID: id,
+                                    dayName: dayNames[i],
                                   )));
                     },
                     child: Container(

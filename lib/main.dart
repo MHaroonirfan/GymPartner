@@ -38,6 +38,27 @@ class _AppHomeScreenState extends State<AppHomeScreen> {
 
   bool _isHomeSelected = true;
 
+  String userName = "";
+  int age = 0;
+  int heightF = 0;
+  int heightI = 0;
+  int weightK = 0;
+  int weightG = 0;
+
+  void setUserData() {
+    userName = SharedPref.instance.getStringValue("name") ?? "";
+
+    age = SharedPref.instance.getIntValue("age") ?? 0;
+
+    heightF = SharedPref.instance.getIntValue("height_feet") ?? 0;
+
+    heightI = SharedPref.instance.getIntValue("height_inches") ?? 0;
+
+    weightK = SharedPref.instance.getIntValue("weight_kilo") ?? 0;
+
+    weightG = SharedPref.instance.getIntValue("weight_gram") ?? 0;
+  }
+
   List<Widget> screens = [
     const HomeScreen(),
     const PreogressScreen(),
@@ -110,23 +131,24 @@ class _AppHomeScreenState extends State<AppHomeScreen> {
   }
 
   Drawer getDrawer() {
+    setUserData();
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          const DrawerHeader(
+          DrawerHeader(
               decoration: BoxDecoration(color: Colors.blue),
               child: Column(
                 children: [
                   Row(
                     children: [
                       Icon(
-                        Icons.person_3_rounded,
+                        Icons.person_rounded,
                         size: 75,
                         color: Colors.white54,
                       ),
                       Text(
-                        "John Cena",
+                        userName,
                         style: TextStyle(fontSize: 32, color: Colors.white),
                       )
                     ],
@@ -134,11 +156,15 @@ class _AppHomeScreenState extends State<AppHomeScreen> {
                   Spacer(),
                   Row(
                     children: [
-                      Column(children: [Text("Age"), Text("30")]),
+                      Column(children: [Text("Age"), Text("$age")]),
                       Spacer(),
-                      Column(children: [Text("Weight"), Text("88")]),
+                      Column(children: [
+                        Text("Weight"),
+                        Text("$weightK.$weightG")
+                      ]),
                       Spacer(),
-                      Column(children: [Text("Height"), Text("181")])
+                      Column(
+                          children: [Text("Height"), Text("$heightF.$heightI")])
                     ],
                   )
                 ],

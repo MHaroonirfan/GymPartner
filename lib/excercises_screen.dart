@@ -2,11 +2,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gym_partener/database.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:intl/intl.dart';
 
 class ExercisesScreen extends StatefulWidget {
   final int dayID;
-  const ExercisesScreen({super.key, required this.dayID});
+  final String dayName;
+  const ExercisesScreen(
+      {super.key, required this.dayID, required this.dayName});
 
   @override
   State<ExercisesScreen> createState() => _ExercisesScreenState();
@@ -15,20 +17,46 @@ class ExercisesScreen extends StatefulWidget {
 class _ExercisesScreenState extends State<ExercisesScreen> {
   List<Map<String, dynamic>> exercisesList = [];
 
+  DateTime timeNow = DateTime.now();
+  String dateText = "";
+  String todayName = "";
+
+  void setToday() {
+    List<String> weekdays = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
+    ];
+
+    int today = timeNow.weekday;
+    todayName = weekdays[today - 1];
+  }
+
   Future fetchData() async {
     List<Map<String, dynamic>>? list = await DatabaseHandler.instance
         .getExercisesFromDB("Excercises", "day_id", widget.dayID);
 
     if (list.isNotEmpty) {
-      exercisesList = list;
+      exercisesList = List<Map<String, dynamic>>.from(list);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setToday();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Monday Excercises"),
+        title: Text(
+            "${todayName == widget.dayName ? "${widget.dayName}(Today)" : widget.dayName} Excercises"),
         backgroundColor: Colors.blue[200],
       ),
       body: FutureBuilder(
@@ -102,7 +130,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                                     await DatabaseHandler.instance.deleteARow(
                                         "Excercises", "ex_id", thisEx["ex_id"]);
                                     setState(() {
-                                      exercisesList;
+                                      exercisesList.remove(thisEx);
                                     });
                                     Navigator.pop(context);
                                   },
@@ -169,29 +197,37 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                                       fontSize: 14, color: Colors.white),
                                 )
                               ]),
-                              Row(
-                                children: [
-                                  IconButton(
-                                      onPressed: () => {},
-                                      icon: const Icon(Icons.done_rounded))
-                                ],
-                              )
+                              IconButton(
+                                  onPressed: () {
+                                    showExercisePopUp(
+                                        exName: thisEx["name"],
+                                        exWeight: thisEx["weight"],
+                                        exSets: thisEx["sets"],
+                                        exReps: thisEx["reps"],
+                                        exTime: thisEx["duration"],
+                                        exID: thisEx["ex_id"],
+                                        saving: true);
+                                  },
+                                  icon: Icon(Icons.done, color: Colors.green))
                             ],
                           )))))));
     }
     return result;
   }
 
-  void showExercisePopUp(
+  Future showExercisePopUp(
       {String exName = "",
       int exWeight = 10,
       int exSets = 1,
       int exReps = 10,
       int exTime = 10,
       int exID = 0,
-      bool updating = false}) {
-    TextEditingController _controller = TextEditingController();
-    _controller.text = exName;
+      bool saving = false,
+      bool updating = false}) async {
+    TextEditingController controller = TextEditingController();
+    controller.text = exName;
+
+    int prevDayId = await getPrevDayId();
     showDialog(
         context: context,
         builder: (context) {
@@ -205,7 +241,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                     Text("Exercise Name:"),
                     Expanded(
                         child: TextField(
-                      controller: _controller,
+                      controller: controller,
                       onChanged: (text) {
                         exName = text;
                       },
@@ -311,6 +347,20 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                           exercisesList;
                         });
                         Navigator.pop(context);
+                      } else if (saving) {
+                        DatabaseHandler.instance.insertInDB("DoneExcercises", {
+                          "name": trimmed,
+                          "weight": exWeight,
+                          "sets": exSets,
+                          "reps": exReps,
+                          "duration": exTime,
+                          "p_day_id": prevDayId,
+                          "day": todayName
+                        });
+                        super.setState(() {
+                          exercisesList;
+                        });
+                        Navigator.pop(context);
                       } else {
                         DatabaseHandler.instance.insertInDB("Excercises", {
                           "name": trimmed,
@@ -331,5 +381,22 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
             );
           });
         });
+  }
+
+  Future<int> getPrevDayId() async {
+    DateFormat dateFormat = DateFormat("dd MMM yy");
+    dateText = dateFormat.format(timeNow);
+    Map<String, dynamic>? dayDB =
+        await DatabaseHandler.instance.getFromDB("PrevDays", "date", dateText);
+
+    if (dayDB != null) {
+      return dayDB["p_day_id"];
+    } else {
+      DatabaseHandler.instance
+          .insertInDB("PrevDays", {"day": todayName, "date": dateText});
+      dayDB = await DatabaseHandler.instance
+          .getFromDB("PrevDays", "date", dateText);
+      return dayDB!["p_day_id"];
+    }
   }
 }

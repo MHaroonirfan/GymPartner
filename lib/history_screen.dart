@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_partener/database.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -13,25 +14,84 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return Scaffold(
       appBar: AppBar(
           title: const Text("History"), backgroundColor: Colors.blue[200]),
-      body: ListView(children: getHistory()),
+      body: FutureBuilder(
+          future: getHistory(),
+          builder: (context, snapShot) {
+            if (snapShot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator.adaptive();
+            } else {
+              return ListView(children: snapShot.data!);
+            }
+          }),
     );
   }
 
-  List<Widget> getHistory() {
+  Future<List<Widget>> getHistory() async {
+    print("2");
     List<Widget> historyResult = [];
+    List<Map<String, dynamic>> prevdays =
+        await DatabaseHandler.instance.getPrevDays();
 
-    for (var i = 0; i < 5; i++) {
-      Widget tile = const ExpansionTile(
-        title: Text('25 Nov Tue'),
+    for (var i = 0; i < prevdays.length; i++) {
+      int? pDayID = prevdays[i]["p_day_id"];
+      Widget tile = ExpansionTile(
+        title: Text("${prevdays[i]["date"]}(${prevdays[i]["day"]})"),
         leading: Icon(Icons.info),
         children: <Widget>[
-          Text('First item detail 1'),
-          Text('First item detail 2'),
+          FutureBuilder(
+              future: getExcercises(pDayID),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator.adaptive();
+                } else {
+                  return Column(children: snapshot.data!);
+                }
+              })
         ],
       );
       historyResult.add(tile);
+      print("object");
     }
 
     return historyResult;
+  }
+
+  Future<List<Widget>> getExcercises(int? dayId) async {
+    List<Map<String, dynamic>> exercises = [];
+    List<Widget> result = [];
+    if (dayId != null) {
+      exercises = await DatabaseHandler.instance
+          .getExercisesFromDB("DoneExcercises", "p_day_id", dayId);
+    } else {
+      return result;
+    }
+    if (exercises.isNotEmpty) {
+      for (var i = 0; i < exercises.length; i++) {
+        print(exercises.length);
+        result.add(Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "${exercises[i]["name"]}",
+              style: TextStyle(fontSize: 24),
+            ),
+            Row(
+              children: [
+                Text("Weight: ${exercises[i]["weight"]}",
+                    style: TextStyle(fontSize: 16)),
+                Text("Sets: ${exercises[i]["sets"]}",
+                    style: TextStyle(fontSize: 16)),
+                Text("Reps: ${exercises[i]["reps"]}",
+                    style: TextStyle(fontSize: 16)),
+                Text("Duration: ${exercises[i]["duration"]}",
+                    style: TextStyle(fontSize: 16))
+              ],
+            )
+          ],
+        ));
+      }
+    }
+
+    return result;
   }
 }

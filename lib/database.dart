@@ -31,9 +31,9 @@ class DatabaseHandler {
             "CREATE TABLE Excercises (ex_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, weight INTEGER, sets INTEGER, reps INTEGER,duration INTEGER, day_id INTEGER, FOREIGN KEY (day_id) REFERENCES Days(day_id) ON DELETE CASCADE)");
 
         await db.execute(
-            "CREATE TABLE PrevDays (day_id INTEGER PRIMARY KEY AUTOINCREMENT, day TEXT, date TEXT)");
+            "CREATE TABLE PrevDays (p_day_id INTEGER PRIMARY KEY AUTOINCREMENT, day TEXT, date TEXT)");
         await db.execute(
-            "CREATE TABLE DoneExcercises (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, weight INTEGER, sets INTEGER, reps INTEGER,day_id INTEGER, FOREIGN KEY (day_id) REFERENCES PrevDays(day_id) ON DELETE CASCADE)");
+            "CREATE TABLE DoneExcercises (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, weight INTEGER, sets INTEGER, reps INTEGER,duration INTEGER,day TEXT, p_day_id INTEGER, FOREIGN KEY (p_day_id) REFERENCES PrevDays(p_day_id) ON DELETE CASCADE)");
       },
     );
   }
@@ -44,9 +44,18 @@ class DatabaseHandler {
         .update(table, values, where: "$whereKey = ?", whereArgs: [whereArg]);
   }
 
+  Future<List<Map<String, dynamic>>> getPrevDays() async {
+    return _database!.query("PrevDays");
+  }
+
+  Future<List<Map<String, dynamic>>> getPrevDaysByName(
+      String whereKey, dynamic whereArg) async {
+    return _database!
+        .query("PrevDays", where: "where $whereKey = ?", whereArgs: [whereArg]);
+  }
+
   Future insertInDB(String table, Map<String, dynamic> values) async {
-    await _database!
-        .insert(table, values, conflictAlgorithm: ConflictAlgorithm.replace);
+    await _database!.insert(table, values);
   }
 
   Future<Map<String, dynamic>?> getFromDB(
@@ -72,5 +81,11 @@ class DatabaseHandler {
   Future deleteARow(String table, String whereKey, dynamic whereArg) async {
     await _database!
         .delete(table, where: "$whereKey = ?", whereArgs: [whereArg]);
+  }
+
+  Future<List<Map<String, dynamic>>> getCompletedExercises(
+      String dayName, String exName) {
+    return _database!.query("DoneExcercises",
+        where: "day = ?, name = ?", whereArgs: [dayName, exName]);
   }
 }
