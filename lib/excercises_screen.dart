@@ -121,6 +121,8 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                               "Delete This exercise",
                               style: TextStyle(fontSize: 24),
                             ),
+                            content:
+                                Text("To delete this Exercise tap Delete."),
                             actions: [
                               TextButton(
                                   onPressed: () {
@@ -237,8 +239,8 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
     TextEditingController controller = TextEditingController();
     String trimmed = exName.trim();
     controller.text = exName;
-    Map<String, dynamic>? checkSave =
-        await DatabaseHandler.instance.getFromDB("Excercises", "name", exName);
+    Map<String, dynamic>? checkSave = await DatabaseHandler.instance
+        .getFromDB("DoneExcercises", "name", exName);
     int prevDayId = await getPrevDayId();
     showDialog(
         context: context,

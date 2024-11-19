@@ -23,13 +23,36 @@ class _HomeScreenState extends State<HomeScreen> {
     "Sunday"
   ];
   Future fetchData() async {
+    List<String> daysToRemove = [];
     for (var i = dayNames.length - 1; i >= 0; i--) {
       Map<String, dynamic>? dbRes =
           await DatabaseHandler.instance.getFromDB("Days", "day", dayNames[i]);
       if (dbRes == null) {
-        dayNames.remove(dayNames[i]);
+        daysToRemove.add(dayNames[i]);
+      } else {
+        List<Map<String, dynamic>> exercises = await DatabaseHandler.instance
+            .getExercisesFromDB("Excercises", "day_id", dbRes!["day_id"]);
+        if (exercises.isEmpty) {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text(
+                    "Please Add a Excercise to ${dayNames[i]}",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                );
+              });
+        }
       }
     }
+
+    dayNames.removeWhere((day) => daysToRemove.contains(day));
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override

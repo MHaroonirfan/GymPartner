@@ -24,6 +24,7 @@ class GymPartner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: "Gym Partner",
       initialRoute: "/",
       routes: {
@@ -37,7 +38,6 @@ class GymPartner extends StatelessWidget {
               }
             })
       },
-      // home: AppHomeScreen(),Jhon
     );
   }
 }

@@ -55,7 +55,8 @@ class DatabaseHandler {
   }
 
   Future insertInDB(String table, Map<String, dynamic> values) async {
-    await _database!.insert(table, values);
+    await _database!
+        .insert(table, values, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<Map<String, dynamic>?> getFromDB(

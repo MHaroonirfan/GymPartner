@@ -163,6 +163,8 @@ class _DaysChartState extends State<DaysChart> {
         ? yLen
         : max(yLen, (fullVolume / exercises.length).ceil());
 
+    lineSpots;
+
     return exercises.isEmpty ? 0 : fullVolume ~/ exercises.length;
   }
 }
