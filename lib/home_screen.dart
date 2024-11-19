@@ -39,12 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
           future: fetchData(),
           builder: (context, snapShot) {
             if (snapShot.connectionState == ConnectionState.waiting) {
-              return Center(
-                  child: SizedBox(
-                      width: 75,
-                      height: 75,
-                      child:
-                          CircularProgressIndicator.adaptive(strokeWidth: 5)));
+              return Center(child: CircularProgressIndicator.adaptive());
             } else {
               return getWidget();
             }

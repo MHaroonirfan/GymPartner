@@ -51,7 +51,7 @@ class _DaysChartState extends State<DaysChart> {
         future: fetchData(),
         builder: (context, snapShot) {
           if (snapShot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator.adaptive();
+            return Center(child: CircularProgressIndicator.adaptive());
           } else {
             return StatefulBuilder(builder: (context, setState) {
               return Column(children: [

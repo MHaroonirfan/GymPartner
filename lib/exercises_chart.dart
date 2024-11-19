@@ -76,7 +76,7 @@ class _ExercisesChartState extends State<ExercisesChart> {
         future: fetchData(),
         builder: (context, snapShot) {
           if (snapShot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator.adaptive();
+            return Center(child: CircularProgressIndicator.adaptive());
           } else {
             return StatefulBuilder(builder: (context, setState) {
               return Column(children: [
