@@ -27,7 +27,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Future<List<Widget>> getHistory() async {
-    print("2");
     List<Widget> historyResult = [];
     List<Map<String, dynamic>> prevdays =
         await DatabaseHandler.instance.getPrevDays();
@@ -50,7 +49,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
         ],
       );
       historyResult.add(tile);
-      print("object");
     }
 
     return historyResult;
@@ -67,7 +65,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
     }
     if (exercises.isNotEmpty) {
       for (var i = 0; i < exercises.length; i++) {
-        print(exercises.length);
         result.add(Padding(
           padding: EdgeInsets.only(left: 50),
           child: Column(

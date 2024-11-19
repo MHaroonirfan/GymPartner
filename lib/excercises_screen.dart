@@ -236,8 +236,6 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
       bool updating = false}) async {
     TextEditingController controller = TextEditingController();
     String trimmed = exName.trim();
-    print("Ex : $exName");
-    print(trimmed);
     controller.text = exName;
     Map<String, dynamic>? checkSave =
         await DatabaseHandler.instance.getFromDB("Excercises", "name", exName);

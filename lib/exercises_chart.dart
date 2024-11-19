@@ -114,9 +114,7 @@ class _ExercisesChartState extends State<ExercisesChart> {
                       }),
                       onChanged: (t) {
                         setState(() {
-                          print("123");
                           _selectedEx = t!;
-                          print(_selectedEx);
                           fetchChartData();
                         });
                       },
