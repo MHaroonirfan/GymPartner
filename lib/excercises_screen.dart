@@ -122,7 +122,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                               style: TextStyle(fontSize: 24),
                             ),
                             content:
-                                Text("To delete this Exercise tap Delete."),
+                                Text("To delete this Exercise press Delete."),
                             actions: [
                               TextButton(
                                   onPressed: () {
@@ -173,36 +173,47 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Column(children: [
-                                Text(
-                                  "${thisEx["name"]}",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white),
-                                ),
-                                Text(
-                                  "Weight: ${thisEx["weight"]}",
-                                  style: TextStyle(
-                                      fontSize: 14, color: Colors.white),
-                                ),
-                                Text(
-                                  "Sets: ${thisEx["sets"]}",
-                                  style: TextStyle(
-                                      fontSize: 14, color: Colors.white),
-                                ),
-                                Text(
-                                  "Reps: ${thisEx["reps"]}",
-                                  style: TextStyle(
-                                      fontSize: 14, color: Colors.white),
-                                ),
-                                Text(
-                                  "Time: ${thisEx["duration"]}min",
-                                  style: TextStyle(
-                                      fontSize: 14, color: Colors.white),
-                                )
-                              ]),
+                              Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "${thisEx["name"]}",
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white),
+                                    ),
+                                    Text(
+                                      "Weight: ${thisEx["weight"]}",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                    Text(
+                                      "Sets: ${thisEx["sets"]}",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                    Text(
+                                      "Reps: ${thisEx["reps"]}",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                    Text(
+                                      "Time: ${thisEx["duration"]}min",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w400),
+                                    )
+                                  ]),
                               if (isToday)
                                 CircleAvatar(
                                     backgroundColor: Colors.blue[100],
@@ -403,7 +414,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                         Navigator.pop(context);
                       }
                     },
-                    child: Text("OK"))
+                    child: Text("Done"))
               ],
             );
           });

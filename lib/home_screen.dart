@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gym_partener/colors.dart';
 import 'package:gym_partener/database.dart';
 import 'package:gym_partener/excercises_screen.dart';
@@ -23,6 +24,15 @@ class _HomeScreenState extends State<HomeScreen> {
     "Sunday"
   ];
   Future fetchData() async {
+    String exName = "";
+    int exWeight = 10;
+    int exSets = 1;
+    int exReps = 10;
+    int exTime = 10;
+    String trimmed = "";
+
+    TextEditingController controller = TextEditingController();
+
     List<String> daysToRemove = [];
     for (var i = dayNames.length - 1; i >= 0; i--) {
       Map<String, dynamic>? dbRes =
@@ -35,12 +45,123 @@ class _HomeScreenState extends State<HomeScreen> {
         if (exercises.isEmpty) {
           showDialog(
               context: context,
+              barrierDismissible: false,
               builder: (context) {
                 return AlertDialog(
                   title: Text(
                     "Please Add a Excercise to ${dayNames[i]}",
                     style: TextStyle(fontSize: 18),
                   ),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(children: [
+                        Text("Exercise Name:"),
+                        Expanded(
+                            child: TextField(
+                          controller: controller,
+                          onChanged: (text) {
+                            exName = text;
+                            controller.text = text;
+                            trimmed = exName.trim();
+                          },
+                        ))
+                      ]),
+                      Row(children: [
+                        Expanded(child: Text("Weight:")),
+                        DropdownButton(
+                            value: exWeight,
+                            menuMaxHeight: 200,
+                            borderRadius: BorderRadius.circular(15),
+                            items: List.generate(200, (index) {
+                              return DropdownMenuItem<int>(
+                                  value: index + 1,
+                                  child: Text("${index + 1}"));
+                            }),
+                            onChanged: (value) {
+                              setState(() {
+                                exWeight = value!;
+                              });
+                            }),
+                        Text("KG")
+                      ]),
+                      Row(children: [
+                        Expanded(child: Text("Sets:")),
+                        DropdownButton(
+                            value: exSets,
+                            menuMaxHeight: 200,
+                            borderRadius: BorderRadius.circular(15),
+                            items: List.generate(20, (index) {
+                              return DropdownMenuItem<int>(
+                                  value: index + 1,
+                                  child: Text("${index + 1}"));
+                            }),
+                            onChanged: (value) {
+                              setState(() {
+                                exSets = value!;
+                              });
+                            }),
+                      ]),
+                      Row(children: [
+                        Expanded(child: Text("Reps:")),
+                        DropdownButton(
+                            value: exReps,
+                            menuMaxHeight: 200,
+                            borderRadius: BorderRadius.circular(15),
+                            items: List.generate(200, (index) {
+                              return DropdownMenuItem<int>(
+                                  value: index + 1,
+                                  child: Text("${index + 1}"));
+                            }),
+                            onChanged: (value) {
+                              setState(() {
+                                exReps = value!;
+                              });
+                            }),
+                      ]),
+                      Row(children: [
+                        Expanded(child: Text("Duration:")),
+                        DropdownButton(
+                            value: exTime,
+                            menuMaxHeight: 200,
+                            borderRadius: BorderRadius.circular(15),
+                            items: List.generate(59, (index) {
+                              return DropdownMenuItem<int>(
+                                  value: index + 1,
+                                  child: Text("${index + 1}"));
+                            }),
+                            onChanged: (value) {
+                              setState(() {
+                                exTime = value!;
+                              });
+                            }),
+                        Text("min")
+                      ])
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          if (trimmed == "") {
+                            Fluttertoast.showToast(
+                                msg: "Please! Give Exercise Name",
+                                toastLength: Toast.LENGTH_LONG,
+                                gravity: ToastGravity.BOTTOM);
+                          } else {
+                            DatabaseHandler.instance.insertInDB("Excercises", {
+                              "name": trimmed,
+                              "weight": exWeight,
+                              "sets": exSets,
+                              "reps": exReps,
+                              "duration": exTime,
+                              "day_id": dbRes["day_id"]
+                            });
+                            trimmed = "";
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: Text("Done"))
+                  ],
                 );
               });
         }
@@ -111,13 +232,22 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: CustomColors.cColors[
                               rnd.nextInt(CustomColors.cColors.length)],
                         ),
-                        child: Text(
-                          dayNames[i],
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600),
-                        )))),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                dayNames[i],
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              Text(
+                                "Tap here to see        \n Exercises",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 18),
+                              )
+                            ])))),
           ),
         );
       }
