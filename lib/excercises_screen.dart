@@ -219,14 +219,13 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                                     backgroundColor: Colors.blue[100],
                                     child: IconButton(
                                         onPressed: () {
-                                          showExercisePopUp(
-                                              exName: thisEx["name"],
-                                              exWeight: thisEx["weight"],
-                                              exSets: thisEx["sets"],
-                                              exReps: thisEx["reps"],
-                                              exTime: thisEx["duration"],
-                                              exID: thisEx["ex_id"],
-                                              saving: true);
+                                          saveARecord(
+                                              thisEx["name"],
+                                              thisEx["weight"],
+                                              thisEx["sets"],
+                                              thisEx["reps"],
+                                              thisEx["duration"],
+                                              thisEx["ex_id"]);
                                         },
                                         icon: Icon(
                                           Icons.done,
@@ -245,14 +244,10 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
       int exReps = 10,
       int exTime = 10,
       int exID = 0,
-      bool saving = false,
       bool updating = false}) async {
     TextEditingController controller = TextEditingController();
     String trimmed = exName.trim();
     controller.text = exName;
-    Map<String, dynamic>? checkSave = await DatabaseHandler.instance
-        .getFromDB("DoneExcercises", "name", exName);
-    int prevDayId = await getPrevDayId();
     showDialog(
         context: context,
         builder: (context) {
@@ -264,18 +259,14 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                 children: [
                   Row(children: [
                     Text("Exercise Name:"),
-                    saving
-                        ? Expanded(
-                            child: Row(
-                                children: [Spacer(), Text(exName), Spacer()]))
-                        : Expanded(
-                            child: TextField(
-                            controller: controller,
-                            onChanged: (text) {
-                              exName = text;
-                              trimmed = exName.trim();
-                            },
-                          ))
+                    Expanded(
+                        child: TextField(
+                      controller: controller,
+                      onChanged: (text) {
+                        exName = text;
+                        trimmed = exName.trim();
+                      },
+                    ))
                   ]),
                   Row(children: [
                     Expanded(child: Text("Weight:")),
@@ -376,29 +367,6 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                           exercisesList;
                         });
                         Navigator.pop(context);
-                      } else if (saving) {
-                        if (checkSave == null) {
-                          DatabaseHandler.instance
-                              .insertInDB("DoneExcercises", {
-                            "name": trimmed,
-                            "weight": exWeight,
-                            "sets": exSets,
-                            "reps": exReps,
-                            "duration": exTime,
-                            "p_day_id": prevDayId,
-                            "day": todayName
-                          });
-                          super.setState(() {
-                            exercisesList;
-                          });
-                          Navigator.pop(context);
-                        } else {
-                          Fluttertoast.showToast(
-                              msg: "Excercise Saved Already",
-                              gravity: ToastGravity.BOTTOM,
-                              toastLength: Toast.LENGTH_LONG);
-                          Navigator.pop(context);
-                        }
                       } else {
                         DatabaseHandler.instance.insertInDB("Excercises", {
                           "name": trimmed,
@@ -436,5 +404,132 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
           .getFromDB("PrevDays", "date", dateText);
       return dayDB!["p_day_id"];
     }
+  }
+
+  Future<void> saveARecord(String exName, int exWeight, int exSets, int exReps,
+      int exTime, int exID) async {
+    Map<String, dynamic>? checkSave = await DatabaseHandler.instance
+        .getFromDB("DoneExcercises", "ex_id", exID);
+    int prevDayId = await getPrevDayId();
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              title: Text("Add/Edit Exercise"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(children: [
+                    Text("Exercise Name:"),
+                    Expanded(child: Text(exName))
+                  ]),
+                  Row(children: [
+                    Expanded(child: Text("Weight:")),
+                    DropdownButton(
+                        value: exWeight,
+                        menuMaxHeight: 200,
+                        borderRadius: BorderRadius.circular(15),
+                        items: List.generate(200, (index) {
+                          return DropdownMenuItem<int>(
+                              value: index + 1, child: Text("${index + 1}"));
+                        }),
+                        onChanged: (value) {
+                          setState(() {
+                            exWeight = value!;
+                          });
+                        }),
+                    Text("KG")
+                  ]),
+                  Row(children: [
+                    Expanded(child: Text("Sets:")),
+                    DropdownButton(
+                        value: exSets,
+                        menuMaxHeight: 200,
+                        borderRadius: BorderRadius.circular(15),
+                        items: List.generate(20, (index) {
+                          return DropdownMenuItem<int>(
+                              value: index + 1, child: Text("${index + 1}"));
+                        }),
+                        onChanged: (value) {
+                          setState(() {
+                            exSets = value!;
+                          });
+                        }),
+                  ]),
+                  Row(children: [
+                    Expanded(child: Text("Reps:")),
+                    DropdownButton(
+                        value: exReps,
+                        menuMaxHeight: 200,
+                        borderRadius: BorderRadius.circular(15),
+                        items: List.generate(200, (index) {
+                          return DropdownMenuItem<int>(
+                              value: index + 1, child: Text("${index + 1}"));
+                        }),
+                        onChanged: (value) {
+                          setState(() {
+                            exReps = value!;
+                          });
+                        }),
+                  ]),
+                  Row(children: [
+                    Expanded(child: Text("Duration:")),
+                    DropdownButton(
+                        value: exTime,
+                        menuMaxHeight: 200,
+                        borderRadius: BorderRadius.circular(15),
+                        items: List.generate(59, (index) {
+                          return DropdownMenuItem<int>(
+                              value: index + 1, child: Text("${index + 1}"));
+                        }),
+                        onChanged: (value) {
+                          setState(() {
+                            exTime = value!;
+                          });
+                        }),
+                    Text("min")
+                  ])
+                ],
+              ),
+              contentPadding: EdgeInsets.all(10),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("Cancel")),
+                TextButton(
+                    onPressed: () async {
+                      if (checkSave == null) {
+                        await DatabaseHandler.instance
+                            .insertInDB("DoneExcercises", {
+                          "name": exName,
+                          "weight": exWeight,
+                          "sets": exSets,
+                          "reps": exReps,
+                          "duration": exTime,
+                          "p_day_id": prevDayId,
+                          "day": todayName,
+                          "ex_id": exID
+                        });
+                        super.setState(() {
+                          exercisesList;
+                        });
+                        Navigator.pop(context);
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: "Excercise Saved Already",
+                            gravity: ToastGravity.BOTTOM,
+                            toastLength: Toast.LENGTH_LONG);
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: Text("Save Record"))
+              ],
+            );
+          });
+        });
   }
 }

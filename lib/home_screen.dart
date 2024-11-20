@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:gym_partener/colors.dart';
 import 'package:gym_partener/database.dart';
+import 'package:gym_partener/colors.dart';
 import 'package:gym_partener/excercises_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -29,19 +29,19 @@ class _HomeScreenState extends State<HomeScreen> {
     int exSets = 1;
     int exReps = 10;
     int exTime = 10;
-    String trimmed = "";
 
     TextEditingController controller = TextEditingController();
 
     List<String> daysToRemove = [];
-    for (var i = dayNames.length - 1; i >= 0; i--) {
+    for (var i = 0; i < dayNames.length; i++) {
+      String trimmed = "";
       Map<String, dynamic>? dbRes =
           await DatabaseHandler.instance.getFromDB("Days", "day", dayNames[i]);
       if (dbRes == null) {
         daysToRemove.add(dayNames[i]);
       } else {
         List<Map<String, dynamic>> exercises = await DatabaseHandler.instance
-            .getExercisesFromDB("Excercises", "day_id", dbRes!["day_id"]);
+            .getExercisesFromDB("Excercises", "day_id", dbRes["day_id"]);
         if (exercises.isEmpty) {
           showDialog(
               context: context,
@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
               builder: (context) {
                 return AlertDialog(
                   title: Text(
-                    "Please Add a Excercise to ${dayNames[i]}",
+                    "Please Add a Excercise to ${dbRes["day"]}",
                     style: TextStyle(fontSize: 18),
                   ),
                   content: Column(
@@ -62,7 +62,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           controller: controller,
                           onChanged: (text) {
                             exName = text;
-                            controller.text = text;
                             trimmed = exName.trim();
                           },
                         ))
@@ -141,14 +140,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   actions: [
                     TextButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (trimmed == "") {
                             Fluttertoast.showToast(
                                 msg: "Please! Give Exercise Name",
                                 toastLength: Toast.LENGTH_LONG,
                                 gravity: ToastGravity.BOTTOM);
                           } else {
-                            DatabaseHandler.instance.insertInDB("Excercises", {
+                            await DatabaseHandler.instance
+                                .insertInDB("Excercises", {
                               "name": trimmed,
                               "weight": exWeight,
                               "sets": exSets,
@@ -156,6 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               "duration": exTime,
                               "day_id": dbRes["day_id"]
                             });
+                            controller.text = "";
                             trimmed = "";
                             Navigator.pop(context);
                           }

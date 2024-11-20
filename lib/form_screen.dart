@@ -416,11 +416,17 @@ class _FormScreenState extends State<FormScreen> {
     for (var i = 0; i < days.length; i++) {
       Map<String, dynamic>? dbRes =
           await DatabaseHandler.instance.getFromDB("Days", "day", days[i]);
-      if (dbRes == null) {
-        setState(() {
+      setState(() {
+        if (dbRes != null) {
+          if (dbRes["selected"] == 1) {
+            print(true);
+            daysSwitch[i] = true;
+          }
+        } else {
           daysSwitch[i] = false;
-        });
-      }
+          print("false");
+        }
+      });
     }
   }
 
@@ -445,8 +451,15 @@ class _FormScreenState extends State<FormScreen> {
       SharedPref.instance.setIntValue("weight_gram", weightG);
 
       for (var i = 0; i < days.length; i++) {
-        if (daysSwitch[i]) {
+        Map<String, dynamic>? dbres =
+            await DatabaseHandler.instance.getFromDB("Days", "day", days[i]);
+        if (dbres == null) {
           await DatabaseHandler.instance.insertInDB("Days", {"day": days[i]});
+        }
+
+        if (daysSwitch[i]) {
+          await DatabaseHandler.instance
+              .updateRowInDB("Days", {"selected": 1}, "day", days[i]);
         } else {
           await DatabaseHandler.instance.deleteARow("Days", "day", days[i]);
         }

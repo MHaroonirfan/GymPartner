@@ -26,14 +26,14 @@ class DatabaseHandler {
       version: 1,
       onCreate: (db, version) async {
         await db.execute(
-            "CREATE TABLE Days (day_id INTEGER PRIMARY KEY AUTOINCREMENT, day TEXT UNIQUE)");
+            "CREATE TABLE Days (day_id INTEGER PRIMARY KEY AUTOINCREMENT, day TEXT UNIQUE, selected INTEGER)");
         await db.execute(
             "CREATE TABLE Excercises (ex_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, weight INTEGER, sets INTEGER, reps INTEGER,duration INTEGER, day_id INTEGER, FOREIGN KEY (day_id) REFERENCES Days(day_id) ON DELETE CASCADE)");
 
         await db.execute(
             "CREATE TABLE PrevDays (p_day_id INTEGER PRIMARY KEY AUTOINCREMENT, day TEXT, date TEXT)");
         await db.execute(
-            "CREATE TABLE DoneExcercises (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, weight INTEGER, sets INTEGER, reps INTEGER,duration INTEGER,day TEXT, p_day_id INTEGER, FOREIGN KEY (p_day_id) REFERENCES PrevDays(p_day_id) ON DELETE CASCADE)");
+            "CREATE TABLE DoneExcercises (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, weight INTEGER, sets INTEGER, reps INTEGER,duration INTEGER,day TEXT,ex_id INTEGER, p_day_id INTEGER, FOREIGN KEY (p_day_id) REFERENCES PrevDays(p_day_id) ON DELETE CASCADE)");
       },
     );
   }
