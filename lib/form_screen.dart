@@ -419,12 +419,10 @@ class _FormScreenState extends State<FormScreen> {
       setState(() {
         if (dbRes != null) {
           if (dbRes["selected"] == 1) {
-            print(true);
             daysSwitch[i] = true;
           }
         } else {
           daysSwitch[i] = false;
-          print("false");
         }
       });
     }
