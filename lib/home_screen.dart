@@ -244,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     fontWeight: FontWeight.w600),
                               ),
                               Text(
-                                "Tap here to see        \n Exercises",
+                                "Tap here to see\nExercises",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 18),
                               )

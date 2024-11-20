@@ -417,16 +417,52 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
         builder: (context) {
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
-              title: Text("Add/Edit Exercise"),
+              title: Text("Save Your Record Achieved"),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(children: [
                     Text("Exercise Name:"),
-                    Expanded(child: Text(exName))
+                    Expanded(
+                        child: Row(children: [
+                      Spacer(),
+                      Text(
+                        exName,
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                      Spacer()
+                    ]))
                   ]),
+                  Row(
+                    children: const [
+                      Expanded(
+                          child: Row(
+                        children: [
+                          Text(""),
+                          Spacer(
+                            flex: 2,
+                          ),
+                          Text(
+                            "Goal",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w500),
+                          ),
+                          Spacer(),
+                          Text(
+                            "Achived",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w500),
+                          )
+                        ],
+                      ))
+                    ],
+                  ),
                   Row(children: [
                     Expanded(child: Text("Weight:")),
+                    Spacer(),
+                    Text("$exWeight"),
+                    Spacer(),
                     DropdownButton(
                         value: exWeight,
                         menuMaxHeight: 200,
@@ -444,6 +480,9 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                   ]),
                   Row(children: [
                     Expanded(child: Text("Sets:")),
+                    Spacer(flex: 4),
+                    Text("$exSets"),
+                    Spacer(flex: 3),
                     DropdownButton(
                         value: exSets,
                         menuMaxHeight: 200,
@@ -460,7 +499,11 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                   ]),
                   Row(children: [
                     Expanded(child: Text("Reps:")),
+                    Spacer(),
+                    Text("$exReps"),
+                    Spacer(),
                     DropdownButton(
+                        padding: EdgeInsets.only(left: 10),
                         value: exReps,
                         menuMaxHeight: 200,
                         borderRadius: BorderRadius.circular(15),
@@ -476,6 +519,9 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                   ]),
                   Row(children: [
                     Expanded(child: Text("Duration:")),
+                    Spacer(),
+                    Text("$exTime"),
+                    Spacer(),
                     DropdownButton(
                         value: exTime,
                         menuMaxHeight: 200,
