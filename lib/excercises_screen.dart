@@ -188,30 +188,30 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                                     Text(
                                       "Weight: ${thisEx["weight"]}",
                                       style: TextStyle(
-                                          fontSize: 14,
+                                          fontSize: 16,
                                           color: Colors.white,
-                                          fontWeight: FontWeight.w400),
+                                          fontWeight: FontWeight.w500),
                                     ),
                                     Text(
                                       "Sets: ${thisEx["sets"]}",
                                       style: TextStyle(
-                                          fontSize: 14,
+                                          fontSize: 16,
                                           color: Colors.white,
-                                          fontWeight: FontWeight.w400),
+                                          fontWeight: FontWeight.w500),
                                     ),
                                     Text(
                                       "Reps: ${thisEx["reps"]}",
                                       style: TextStyle(
-                                          fontSize: 14,
+                                          fontSize: 16,
                                           color: Colors.white,
-                                          fontWeight: FontWeight.w400),
+                                          fontWeight: FontWeight.w500),
                                     ),
                                     Text(
                                       "Time: ${thisEx["duration"]}min",
                                       style: TextStyle(
-                                          fontSize: 14,
+                                          fontSize: 16,
                                           color: Colors.white,
-                                          fontWeight: FontWeight.w400),
+                                          fontWeight: FontWeight.w500),
                                     )
                                   ]),
                               if (isToday)
