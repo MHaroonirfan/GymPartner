@@ -93,12 +93,12 @@ class _ExercisesChartState extends State<ExercisesChart> {
                           child: Text(dayNames[index]),
                         );
                       }),
-                      onChanged: (t) {
+                      onChanged: (t) async {
                         _selectedDay = t!;
+                        await updateExercises(_selectedDay);
+                        await fetchChartData();
                         setState(() {
                           _selectedDay;
-                          updateExercises(_selectedDay);
-                          fetchChartData();
                         });
                       },
                     ),
@@ -108,16 +108,17 @@ class _ExercisesChartState extends State<ExercisesChart> {
                       borderRadius: BorderRadius.circular(15),
                       items: List<DropdownMenuItem<String>>.generate(
                           exercisesList.length, (index) {
+                        print(exercisesList[index]);
                         return DropdownMenuItem<String>(
                           value: exercisesList[index],
                           child: Text(exercisesList[index]),
                         );
                       }),
-                      onChanged: (t) {
+                      onChanged: (t) async {
                         _selectedEx = t!;
+                        await fetchChartData();
                         setState(() {
                           _selectedEx;
-                          fetchChartData();
                         });
                       },
                     ),
