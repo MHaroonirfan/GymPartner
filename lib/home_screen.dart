@@ -47,123 +47,125 @@ class _HomeScreenState extends State<HomeScreen> {
               context: context,
               barrierDismissible: false,
               builder: (context) {
-                return AlertDialog(
-                  title: Text(
-                    "Please Add a Excercise to ${dbRes["day"]}",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(children: [
-                        Text("Exercise Name:"),
-                        Expanded(
-                            child: TextField(
-                          controller: controller,
-                          onChanged: (text) {
-                            exName = text;
-                            trimmed = exName.trim();
+                return StatefulBuilder(builder: (context, setState) {
+                  return AlertDialog(
+                    title: Text(
+                      "Please Add a Excercise to ${dbRes["day"]}",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(children: [
+                          Text("Exercise Name:"),
+                          Expanded(
+                              child: TextField(
+                            controller: controller,
+                            onChanged: (text) {
+                              exName = text;
+                              trimmed = exName.trim();
+                            },
+                          ))
+                        ]),
+                        Row(children: [
+                          Expanded(child: Text("Weight:")),
+                          DropdownButton(
+                              value: exWeight,
+                              menuMaxHeight: 200,
+                              borderRadius: BorderRadius.circular(15),
+                              items: List.generate(200, (index) {
+                                return DropdownMenuItem<int>(
+                                    value: index + 1,
+                                    child: Text("${index + 1}"));
+                              }),
+                              onChanged: (value) {
+                                setState(() {
+                                  exWeight = value!;
+                                });
+                              }),
+                          Text("KG")
+                        ]),
+                        Row(children: [
+                          Expanded(child: Text("Sets:")),
+                          DropdownButton(
+                              value: exSets,
+                              menuMaxHeight: 200,
+                              borderRadius: BorderRadius.circular(15),
+                              items: List.generate(20, (index) {
+                                return DropdownMenuItem<int>(
+                                    value: index + 1,
+                                    child: Text("${index + 1}"));
+                              }),
+                              onChanged: (value) {
+                                setState(() {
+                                  exSets = value!;
+                                });
+                              }),
+                        ]),
+                        Row(children: [
+                          Expanded(child: Text("Reps:")),
+                          DropdownButton(
+                              value: exReps,
+                              menuMaxHeight: 200,
+                              borderRadius: BorderRadius.circular(15),
+                              items: List.generate(200, (index) {
+                                return DropdownMenuItem<int>(
+                                    value: index + 1,
+                                    child: Text("${index + 1}"));
+                              }),
+                              onChanged: (value) {
+                                setState(() {
+                                  exReps = value!;
+                                });
+                              }),
+                        ]),
+                        Row(children: [
+                          Expanded(child: Text("Duration:")),
+                          DropdownButton(
+                              value: exTime,
+                              menuMaxHeight: 200,
+                              borderRadius: BorderRadius.circular(15),
+                              items: List.generate(59, (index) {
+                                return DropdownMenuItem<int>(
+                                    value: index + 1,
+                                    child: Text("${index + 1}"));
+                              }),
+                              onChanged: (value) {
+                                setState(() {
+                                  exTime = value!;
+                                });
+                              }),
+                          Text("min")
+                        ])
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                          onPressed: () async {
+                            if (trimmed == "") {
+                              Fluttertoast.showToast(
+                                  msg: "Please! Give Exercise Name",
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.BOTTOM);
+                            } else {
+                              await DatabaseHandler.instance
+                                  .insertInDB("Excercises", {
+                                "name": trimmed,
+                                "weight": exWeight,
+                                "sets": exSets,
+                                "reps": exReps,
+                                "duration": exTime,
+                                "day_id": dbRes["day_id"]
+                              });
+                              controller.text = "";
+                              trimmed = "";
+                              Navigator.pop(context);
+                            }
                           },
-                        ))
-                      ]),
-                      Row(children: [
-                        Expanded(child: Text("Weight:")),
-                        DropdownButton(
-                            value: exWeight,
-                            menuMaxHeight: 200,
-                            borderRadius: BorderRadius.circular(15),
-                            items: List.generate(200, (index) {
-                              return DropdownMenuItem<int>(
-                                  value: index + 1,
-                                  child: Text("${index + 1}"));
-                            }),
-                            onChanged: (value) {
-                              setState(() {
-                                exWeight = value!;
-                              });
-                            }),
-                        Text("KG")
-                      ]),
-                      Row(children: [
-                        Expanded(child: Text("Sets:")),
-                        DropdownButton(
-                            value: exSets,
-                            menuMaxHeight: 200,
-                            borderRadius: BorderRadius.circular(15),
-                            items: List.generate(20, (index) {
-                              return DropdownMenuItem<int>(
-                                  value: index + 1,
-                                  child: Text("${index + 1}"));
-                            }),
-                            onChanged: (value) {
-                              setState(() {
-                                exSets = value!;
-                              });
-                            }),
-                      ]),
-                      Row(children: [
-                        Expanded(child: Text("Reps:")),
-                        DropdownButton(
-                            value: exReps,
-                            menuMaxHeight: 200,
-                            borderRadius: BorderRadius.circular(15),
-                            items: List.generate(200, (index) {
-                              return DropdownMenuItem<int>(
-                                  value: index + 1,
-                                  child: Text("${index + 1}"));
-                            }),
-                            onChanged: (value) {
-                              setState(() {
-                                exReps = value!;
-                              });
-                            }),
-                      ]),
-                      Row(children: [
-                        Expanded(child: Text("Duration:")),
-                        DropdownButton(
-                            value: exTime,
-                            menuMaxHeight: 200,
-                            borderRadius: BorderRadius.circular(15),
-                            items: List.generate(59, (index) {
-                              return DropdownMenuItem<int>(
-                                  value: index + 1,
-                                  child: Text("${index + 1}"));
-                            }),
-                            onChanged: (value) {
-                              setState(() {
-                                exTime = value!;
-                              });
-                            }),
-                        Text("min")
-                      ])
+                          child: Text("Done"))
                     ],
-                  ),
-                  actions: [
-                    TextButton(
-                        onPressed: () async {
-                          if (trimmed == "") {
-                            Fluttertoast.showToast(
-                                msg: "Please! Give Exercise Name",
-                                toastLength: Toast.LENGTH_LONG,
-                                gravity: ToastGravity.BOTTOM);
-                          } else {
-                            await DatabaseHandler.instance
-                                .insertInDB("Excercises", {
-                              "name": trimmed,
-                              "weight": exWeight,
-                              "sets": exSets,
-                              "reps": exReps,
-                              "duration": exTime,
-                              "day_id": dbRes["day_id"]
-                            });
-                            controller.text = "";
-                            trimmed = "";
-                            Navigator.pop(context);
-                          }
-                        },
-                        child: Text("Done"))
-                  ],
-                );
+                  );
+                });
               });
         }
       }
