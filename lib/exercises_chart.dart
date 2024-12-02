@@ -94,8 +94,9 @@ class _ExercisesChartState extends State<ExercisesChart> {
                         );
                       }),
                       onChanged: (t) {
+                        _selectedDay = t!;
                         setState(() {
-                          _selectedDay = t!;
+                          _selectedDay;
                           updateExercises(_selectedDay);
                           fetchChartData();
                         });
@@ -167,8 +168,7 @@ class _ExercisesChartState extends State<ExercisesChart> {
   }
 
   Future fetchChartData() async {
-    if (_selectedDay == "" || _selectedEx == "") {
-      // If no day or exercise selected, clear chart
+    if (_selectedEx == "" || _selectedDay == "") {
       weightData = LineChartBarData(spots: []);
       setsData = LineChartBarData(spots: []);
       repsData = LineChartBarData(spots: []);
