@@ -114,8 +114,9 @@ class _ExercisesChartState extends State<ExercisesChart> {
                         );
                       }),
                       onChanged: (t) {
+                        _selectedEx = t!;
                         setState(() {
-                          _selectedEx = t!;
+                          _selectedEx;
                           fetchChartData();
                         });
                       },
