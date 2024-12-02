@@ -108,7 +108,6 @@ class _ExercisesChartState extends State<ExercisesChart> {
                       borderRadius: BorderRadius.circular(15),
                       items: List<DropdownMenuItem<String>>.generate(
                           exercisesList.length, (index) {
-                        print(exercisesList[index]);
                         return DropdownMenuItem<String>(
                           value: exercisesList[index],
                           child: Text(exercisesList[index]),
